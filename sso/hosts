@@ -1,0 +1,6 @@
+[kong]
+sso_kong_1
+
+[keycloak]
+sso_keycloak_1
+

@@ -1,0 +1,26 @@
+---
+- hosts: all
+  remote_user: root
+  connection: local
+
+  tasks:
+    - name: Start Kong PostgreSQL DB
+      docker_compose:
+        files:
+          - docker-compose.yml
+      tags:
+        - start
+        - kong-db
+
+    - name: Build Kong OIDC image
+      docker_image:
+        name: kong:0.14-centos-oidc
+        source: build
+        build:
+          pull: yes
+          path: ./kong
+      tags:
+        - build
+        - start
+        - kong
+
