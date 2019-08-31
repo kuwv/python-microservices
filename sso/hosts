@@ -1,9 +1,0 @@
-[kong_svc]
-kong
-
-[keycloak_svc]
-keycloak
-
-[kong]
-kong-db
-keyclaok-db
