@@ -1,9 +1,9 @@
-[kong]
-sso_kong_1
+[kong_svc]
+kong
 
-[keycloak]
-sso_keycloak_1
+[keycloak_svc]
+keycloak
 
 [kong]
 kong-db
-kong
+keyclaok-db
