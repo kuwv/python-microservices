@@ -1,0 +1,32 @@
+---
+- hosts: all
+  remote_user: root
+  connection: local
+
+  tasks:
+    - name: Remove SSO containers
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - kong
+        - kong-db
+
+    - name: Remove KeyCloak / Kong network(s)
+      docker_network:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - kong-net
+        - keycloak-net
+      when: sso_uurge_networks|d(true) | bool
+
+    - name: Remove KeyCloak / Kong volume(s)
+      docker_volume:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - kong-datastore
+        - keycloak-datastore
+      when: sso_purge_volumes|d(false) | bool
+...
