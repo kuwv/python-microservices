@@ -48,17 +48,29 @@ DOCKER
 
 $ansible = <<-ANSIBLE
   # /usr/local/bin/pip3.6 install ansible docker docker-compose
-  yum install ansible python2-pip -y
-  pip install docker docker-compose
+  yum install ansible python-docker python2-pip -y
 ANSIBLE
 
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/centos-7"
 
-  config.vm.synced_folder "projects", "/home/vagrant/projects", type: "virtualbox"
+  config.vm.network "private_network", ip: "192.168.122.10"
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 8001, host: 8001
+  config.vm.network "forwarded_port", guest: 8180, host: 8180
+  config.vm.network "forwarded_port", guest: 8443, host: 8443
+  config.vm.network "forwarded_port", guest: 8444, host: 8444
 
-  config.vm.provision "shell", inline: $base
-  config.vm.provision "shell", inline: $python
-  config.vm.provision "shell", inline: $docker
-  config.vm.provision "shell", inline: $ansible
+  config.vm.provision "base", type: "shell", inline: $base
+  config.vm.provision "python", type: "shell", inline: $python
+  config.vm.provision "docker", type: "shell", inline: $docker
+  config.vm.provision "deploy", type: "shell", inline: $ansible
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "sso/deploy.yml"
+  end
+
+  config.trigger.after :up do
+    system("open", "http://localhost:8000/mock")
+  end
 end
