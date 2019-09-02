@@ -303,7 +303,7 @@
         - block:
             - name: Check if realm user exists
               uri:
-                url: http://localhost:8180/auth/admin/realms/master/users/johnson
+                url: http://localhost:8180/auth/admin/realms/master/users?username=johnson
                 headers:
                   Authorization: "bearer {{ sso_bearer_token }}"
                 body_format: json
