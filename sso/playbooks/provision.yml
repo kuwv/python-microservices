@@ -3,17 +3,6 @@
   connection: local
 
   tasks:
-    - name: Build Kong OIDC image
-      docker_image:
-        name: kong:0.14-centos-oidc
-        source: build
-        build:
-          pull: yes
-          path: ../kong
-      tags:
-        - build
-        - kong
-
     - block:
         - name: Setup network for KeyCloak / Kong
           docker_network:
@@ -32,6 +21,14 @@
         - always
 
     - block:
+        - name: Build Kong OIDC image
+          docker_image:
+            name: kong:0.14-centos-oidc
+            source: build
+            build:
+              pull: yes
+              path: ../kong
+
         - name: Start Kong PostgreSQL DB
           docker_container:
             name: kong-db
@@ -213,8 +210,17 @@
             url: http://localhost:8001
             return_content: yes
           register: plugin_register
-          failed_when:
-            - not plugin_register.json.plugins.available_on_server.oidc
+          until: plugin_register.json.plugins.available_on_server.oidc|d(false)
+          retries: 10
+
+        - name: Get KeyCloak address
+          set_fact:
+            keycloak_addr: "{{ keycloak_register['ansible_facts']\
+              ['docker_container']\
+              ['NetworkSettings']\
+              ['Networks']\
+              ['keycloak-net']\
+              ['IPAddress'] }}"
 
         - block:
             - name: Check if mock service is loaded in Kong
@@ -256,15 +262,10 @@
                 status_code: 201
               register: route_register
 
-        - name: Create client secret
-          set_fact:
-            sso_secret: >-
-              {{ lookup('password',
-              '/dev/null length=32 chars=ascii_letters,digits') }}
-
         - name: Authenticate with KeyCloak
           uri:
-            url: http://localhost:8180/auth/realms/master/protocol/openid-connect/token
+            url: "http://localhost:8180/auth/realms/master\
+              /protocol/openid-connect/token"
             method: POST
             body_format: form-urlencoded
             body:
@@ -274,6 +275,12 @@
               grant_type: password
             return_content: yes
           register: sso_auth
+
+        - name: Create client secret
+          set_fact:
+            sso_secret: >-
+              {{ lookup('password',
+              '/dev/null length=32 chars=ascii_letters,digits') }}
 
         - name: Set KeyCloak access token
           set_fact:
@@ -303,10 +310,10 @@
         - block:
             - name: Check if realm user exists
               uri:
-                url: http://localhost:8180/auth/admin/realms/master/users?username=johnson
+                url: "http://localhost:8180/auth/admin/realms/master\
+                  /users?username=johnson"
                 headers:
                   Authorization: "bearer {{ sso_bearer_token }}"
-                body_format: json
                 return_content: yes
               register: user_register
           rescue:
@@ -328,8 +335,30 @@
                 status_code: 201
                 return_content: yes
               register: user_register
+
+        - block:
+            - name: Check if kong is registered with keycloak
+              uri:
+                url: http://localhost:8001/plugins?name=oidc
+                return_content: yes
+              register: kong_bind_register
+          rescue:
+            - name: Configure kong with keycloak
+              uri:
+                url: http://localhost:8001/plugins
+                method: POST
+                body_format: json
+                body:
+                  name: oidc
+                  config.client_id: kong
+                  config.client_secret: "{{ sso_secret }}"
+                  config.discovery: "http://{{ keycloak_addr }}:8180/auth\
+                    /realms/master/.well-known/openid-configuration"
+                status_code: 201
+                return_content: yes
+              register: kong_bind_register
       tags:
-        - client
+        - endpoint
 
 # TODO: In case any commands need to be run within the container
 # - hosts: kong
