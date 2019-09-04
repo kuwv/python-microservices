@@ -66,11 +66,14 @@ Vagrant.configure("2") do |config|
   config.vm.provision "docker", type: "shell", inline: $docker
   config.vm.provision "deploy", type: "shell", inline: $ansible
 
-  config.vm.provision "ansible" do |ansible|
+  config.vm.provision "provision", type: "ansible_local" do |ansible|
     ansible.playbook = "sso/deploy.yml"
   end
 
-  config.trigger.after :up do
-    system("open", "http://localhost:8000/mock")
+  config.trigger.after :provision do |trigger|
+    trigger.ignore = [:up, :destroy, :halt, :package]
+    trigger.ruby do
+      system("open", "http://localhost:8000/mock")
+    end
   end
 end

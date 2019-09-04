@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  remote_user: root
   connection: local
 
   tasks:
@@ -247,7 +248,7 @@
         - block:
             - name: Check if mock route is loaded in Kong
               uri:
-                url: http://localhost:8000/mock
+                url: "http://localhost:8000/mock?service.id={{ sid }}"
               register: route_register
           rescue:
             - name: Register route in Kong
