@@ -4,11 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-docker = "*"
 docker-compose = "*"
 ansible = "*"
 
 [packages]
-
-[requires]
-python_version = "3.6"
+# [requires]
+# python_version = "3.6"
+docker-py = "*"

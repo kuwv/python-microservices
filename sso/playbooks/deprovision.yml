@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  remote_user: root
+  become: true
   connection: local
 
   tasks:
@@ -16,25 +16,8 @@
       tags:
         - containers
 
-    - name: Remove KeyCloak / Kong network(s)
-      docker_network:
-        name: "{{ item }}"
-        state: absent
-      loop:
-        - kong-net
-        - keycloak-net
-      when: sso_uurge_networks|d(true) | bool
-      tags:
-        - network
-
-    - name: Remove KeyCloak / Kong volume(s)
-      docker_volume:
-        name: "{{ item }}"
-        state: absent
-      loop:
-        - kong-datastore
-        - keycloak-datastore
-      when: sso_purge_volumes|d(false) | bool
-      tags:
-        - volume
+    - name: Execute resources removal tasks
+      import_tasks: tasks/resources.yml
+      vars:
+        sso_network_state: absent
 ...

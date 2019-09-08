@@ -1,0 +1,86 @@
+---
+- name: Check if KeyCloak DB is running
+  docker_container_info:
+    name: keycloak-db
+  register: keycloak_db_state
+
+- block:
+    - name: Start KeyCloak DB
+      docker_container:
+        name: keycloak-db
+        image: postgres:9.6
+        volumes:
+          - keycloak-datastore:/var/lib/postresql/data
+        networks_cli_compatible: true
+        networks:
+          - name: keycloak-net
+        exposed_ports:
+          - '25432:5432'
+        env:
+          POSTGRES_DB: keycloak
+          POSTGRES_USER: keycloak
+          POSTGRES_PASSWORD: password
+      register: keycloak_db_register
+    
+    - name: Wait for KeyCloak DB to accept connections
+      wait_for:
+        host: "{{ keycloak_db_register['ansible_facts']\
+          ['docker_container']\
+          ['NetworkSettings']\
+          ['Networks']\
+          ['keycloak-net']\
+          ['IPAddress'] }}"
+        port: 5432
+        state: started
+        connect_timeout: 1
+        timeout: 30
+      register: keycloak_db_running
+      until: keycloak_db_running is success
+      retries: 10
+  when: not keycloak_db_state.exists
+
+- name: Check if KeyCloak DB is running
+  docker_container_info:
+    name: keycloak
+  register: keycloak_state
+
+- block:
+    - name: Start KeyCloak
+      docker_container:
+        name: keycloak
+        image: jboss/keycloak:4.5.0.Final
+        networks_cli_compatible: true
+        networks:
+          - name: keycloak-net
+            links:
+              - keycloak-db
+        ports:
+          - '8180:8080'
+        env:
+          DB_VENDOR: POSTGRES
+          DB_ADDR: keycloak-db
+          DB_PORT: '5432'
+          DB_DATABASE: keycloak
+          DB_USER: keycloak
+          DB_PASSWORD: password
+          KEYCLOAK_USER: admin
+          KEYCLOAK_PASSWORD: admin
+      register: keycloak_register
+    
+    - name: Wait for KeyCloak to accept connections
+      wait_for:
+        host: "{{ keycloak_register['ansible_facts']\
+          ['docker_container']\
+          ['NetworkSettings']\
+          ['Networks']\
+          ['keycloak-net']\
+          ['IPAddress'] }}"
+        port: 8080
+        state: started
+        connect_timeout: 1
+        timeout: 30
+      register: keycloak_running
+      until: keycloak_running is success
+      retries: 10
+  when: not keycloak_state.exists
+...

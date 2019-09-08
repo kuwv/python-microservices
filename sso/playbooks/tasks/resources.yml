@@ -1,0 +1,21 @@
+---
+- name: Setup network for KeyCloak / Kong
+  docker_network:
+    name: "{{ item }}"
+    state: "{{ sso_network_state | d('present') }}"
+  loop:
+    - kong-net
+    - keycloak-net
+  tags:
+    - networks
+
+- name: Setup volumes for KeyCloak / Kong
+  docker_volume:
+    name: "{{ item }}"
+    state: "{{ sso_volume_state | d('present') }}"
+  loop:
+    - kong-datastore
+    - keycloak-datastore
+  tags:
+    - volumes
+...
