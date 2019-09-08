@@ -60,12 +60,14 @@
               Authorization: "bearer {{ token }}"
             return_content: yes
           register: user_register
+          failed_when: user_register.result == []
       rescue:
         - name: Create realm user
           uri:
-            url: http://localhost:8180/auth/admin/realms/master/users
+            url: "http://localhost:8180/auth/admin/realms/master/users?realm=master"
             method: POST
             headers:
+              Accept: application/json
               Authorization: "bearer {{ token }}"
             body_format: json
             body:
