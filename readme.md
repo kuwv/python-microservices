@@ -1,1 +1,1 @@
-[1. SSO setup](./sso/readme.md)
+1. [SSO setup](./sso/readme.md)
