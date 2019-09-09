@@ -12,6 +12,8 @@
           password: admin
           grant_type: password
         return_content: yes
+      retries: 3
+      delay: 3
       register: sso_auth
 
     - name: Set KeyCloak access token
