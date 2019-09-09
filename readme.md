@@ -1,18 +1,18 @@
 # Microservices with Python
 
-# Synopsis
+## Synopsis
 
 This project is intended as a starting point for creating microserices using Python.
 
-# Index
+## Index
 
 1. [SSO setup](./sso/readme.md)
 
-# Description
+## Description
 
-# Setup
+## Setup
 
-# See also
+## See also
 
 [The Twelve-Factor App](https://12factor.net/)
 [The Reactive Manifesto](https://www.reactivemanifesto.org/)
