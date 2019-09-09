@@ -111,15 +111,17 @@
           changed_when: true
           register: endpoint_configure
 
-  # always:
-  #   - name: Logout with KeyCloak
-  #     uri:
-  #       url: "http://localhost:8180/auth/realms/master\
-  #         /protocol/openid-connect/logout"
-  #       method: POST
-  #       body_format: form-urlencoded
-  #       body:
-  #         client_id: admin-cli
-  #       return_content: yes
-  #     register: sso_auth
+  always:
+    - name: Logout with KeyCloak
+      uri:
+        url: "http://localhost:8180/auth/realms/master\
+          /protocol/openid-connect/logout"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          client_id: admin-cli
+          refresh_token: "{{ sso_auth.json.refresh_token }}"
+        status_code: 204
+        return_content: yes
+      register: sso_auth
 ...
