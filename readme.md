@@ -1,12 +1,13 @@
 # Microservices with Python
 
+## Index
+
+&copy; [ License ](license.md)
+1. [SSO setup - Using Ansible to deploy KeyCloak / Kong](./sso/readme.md)
+
 ## Synopsis
 
 This project is intended as a starting point for creating microserices using Python.
-
-## Index
-
-1. [SSO setup](./sso/readme.md)
 
 ## Description
 
