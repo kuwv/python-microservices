@@ -17,6 +17,11 @@ This project is intended as a starting point for creating microserices using Pyt
 
 ## Setup
 
+### Using Vagrant
+
+```
+vagrant up --provision-with deploy
+```
 
 ### Using pipenv
 
