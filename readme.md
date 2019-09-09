@@ -2,7 +2,7 @@
 
 ## Index
 
-[ License ](license.md)
+- [ License ](license.md)
 1. [SSO setup - Using Ansible to deploy KeyCloak / Kong](./sso/readme.md)
 
 ## Synopsis
