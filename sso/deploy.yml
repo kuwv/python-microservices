@@ -1,0 +1,12 @@
+---
+- name: Setup SSO
+  import_playbook: playbooks/provision.yml
+  tags:
+    - setup
+
+- name: Remove SSO
+  import_playbook: playbooks/deprovision.yml
+  tags:
+    - never
+    - remove
+...

@@ -1,0 +1,34 @@
+---
+- hosts: all
+  become: true
+  connection: local
+
+  tasks:
+    - name: Execute resource setup tasks
+      import_tasks: tasks/resources.yml
+      tags:
+        - kong
+        - keycloak
+
+    - name: Execute Kong setup tasks
+      import_tasks: tasks/kong.yml
+      tags:
+        - kong
+
+    - name: Execute KeyCloak setup tasks
+      import_tasks: tasks/keycloak.yml
+      tags:
+        - keycloak
+
+    - name: Execute kong endpoint setup tasks
+      import_tasks: tasks/kong-endpoint.yml
+      tags:
+        - kong
+        - endpoint
+
+    - name: Execute endpoint setup tasks
+      import_tasks: tasks/endpoint.yml
+      tags:
+        - keycloak
+        - endpoint
+...

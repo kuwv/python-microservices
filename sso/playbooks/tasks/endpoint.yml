@@ -1,0 +1,124 @@
+---
+- block:
+    - name: Authenticate with KeyCloak
+      uri:
+        url: "http://localhost:8180/auth/realms/master\
+          /protocol/openid-connect/token"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          client_id: admin-cli
+          username: admin
+          password: admin
+          grant_type: password
+        return_content: yes
+      register: sso_auth
+
+    - name: Set KeyCloak access token
+      set_fact:
+        token: "{{ sso_auth.json.access_token }}"
+
+    - name: Create KeyCloak client
+      keycloak_client:
+        auth_client_id: admin-cli
+        auth_keycloak_url: http://localhost:8180/auth
+        auth_realm: master
+        auth_username: admin
+        auth_password: admin
+        client_id: kong
+        id: "{{ sid }}"
+        protocol: openid-connect
+        public_client: false
+        root_url: http://localhost:8000
+        redirect_uris:
+          - /mock/*
+        direct_access_grants_enabled: true
+        standard_flow_enabled: true
+        client_authenticator_type: client-secret
+        state: present
+      register: client_register
+
+    - name: Retrieve client ID
+      set_fact:
+        cid: "{{ client_register.proposed.id }}"
+
+    - name: Retrieve client secret
+      uri:
+        url: "http://localhost:8180/auth/admin/realms/master/clients\
+          /{{ cid }}/client-secret"
+        headers:
+          Authorization: "bearer {{ token }}"
+        return_content: yes
+      register: client_secret
+
+    - block:
+        - name: Check if realm user exists
+          uri:
+            url: "http://localhost:8180/auth/admin/realms/master\
+              /users?username=johnson"
+            headers:
+              Authorization: "bearer {{ token }}"
+            return_content: yes
+          register: user_register
+          failed_when: user_register.json == []
+      rescue:
+        - name: Create realm user
+          uri:
+            url: "http://localhost:8180/auth/admin/realms/master\
+              /users?realm=master"
+            method: POST
+            headers:
+              Accept: application/json
+              Authorization: "bearer {{ token }}"
+            body_format: json
+            body:
+              username: johnson
+              email: johnson@localhost
+              enabled: 'true'
+              emailVerified: 'true'
+              credentials:
+                - type: password
+                  value: password
+            status_code: 201
+            return_content: yes
+          changed_when: true
+          register: user_register
+
+    - block:
+        - name: Check if kong is registered with keycloak
+          uri:
+            url: http://localhost:8001/plugins?name=oidc
+            return_content: yes
+          register: endpoint_configure
+          failed_when: endpoint_configure.json.data == []
+      rescue:
+        - name: Configure kong with keycloak
+          uri:
+            url: http://localhost:8001/plugins
+            method: POST
+            body_format: json
+            body:
+              name: oidc
+              config.client_id: kong
+              config.client_secret: "{{ client_secret.json.value }}"
+              config.discovery: "http://{{ ansible_eth1.ipv4.address }}:\
+                8180/auth/realms/master/.well-known/openid-configuration"
+            timeout: 300
+            status_code: 201
+            return_content: yes
+          changed_when: true
+          register: endpoint_configure
+
+  always:
+    - name: Logout with KeyCloak
+      uri:
+        url: "http://localhost:8180/auth/realms/master\
+          /protocol/openid-connect/logout"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          client_id: admin-cli
+          refresh_token: "{{ sso_auth.json.refresh_token }}"
+        status_code: 204
+      when: sso_auth.json is defined
+...

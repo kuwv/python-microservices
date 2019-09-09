@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: true
+  connection: local
+
+  tasks:
+    - name: Remove SSO containers
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - keycloak
+        - keycloak-db
+        - kong
+        - kong-db
+      tags:
+        - containers
+
+    - name: Execute resources removal tasks
+      import_tasks: tasks/resources.yml
+      vars:
+        sso_network_state: absent
+...
