@@ -84,8 +84,6 @@
           changed_when: true
           register: user_register
 
-    - debug: var=user_register
-
     - block:
         - name: Check if kong is registered with keycloak
           uri:
@@ -122,6 +120,5 @@
           client_id: admin-cli
           refresh_token: "{{ sso_auth.json.refresh_token }}"
         status_code: 204
-        return_content: yes
-      register: sso_auth
+      when: sso_auth.json is defined
 ...
