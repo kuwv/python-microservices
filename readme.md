@@ -14,5 +14,5 @@ This project is intended as a starting point for creating microserices using Pyt
 
 ## See also
 
-[The Twelve-Factor App](https://12factor.net/)
-[The Reactive Manifesto](https://www.reactivemanifesto.org/)
+- [The Twelve-Factor App](https://12factor.net/)
+- [The Reactive Manifesto](https://www.reactivemanifesto.org/)
