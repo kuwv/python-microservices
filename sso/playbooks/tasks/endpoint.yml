@@ -17,9 +17,6 @@
       delay: 1
       register: sso_auth
 
-    - debug:
-        var: sso_auth
-
     - name: Set KeyCloak access token
       set_fact:
         token: "{{ sso_auth.json.access_token }}"
