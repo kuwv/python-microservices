@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "docker", type: "shell", inline: $docker
   config.vm.provision "python", type: "shell", inline: $python
 
-  config.vm.provision "setup", type: "ansible_local", run: "never" do |ansible|
+  config.vm.provision "setup", type: "ansible_local" do |ansible|
     ansible.playbook = "sso/deploy.yml"
     ansible.verbose = true
   end

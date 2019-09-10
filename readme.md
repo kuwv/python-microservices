@@ -19,8 +19,14 @@ This project is intended as a starting point for creating microserices using Pyt
 
 ### Using Vagrant
 
+Start VM with application
 ```
-vagrant up --provision-with deploy
+vagrant up --provision-with base,docker,setup
+```
+
+Removing application from VM
+```
+vagrant up --provision-with remove
 ```
 
 ### Using pipenv
