@@ -28,13 +28,13 @@
         auth_realm: master
         auth_username: admin
         auth_password: admin
-        client_id: kong-oidc
+        client_id: webapp
         id: "{{ sid }}"
         protocol: openid-connect
         public_client: false
-        root_url: http://localhost:8000
+        root_url: http://localhost:8000/webapp
         redirect_uris:
-          - /mock/*
+          - http://localhost:8000/webapp*
         direct_access_grants_enabled: true
         standard_flow_enabled: true
         client_authenticator_type: client-secret
@@ -55,54 +55,21 @@
       register: client_secret
 
     - block:
-        - name: Check if realm user exists
+        - name: Check if webapp is registered with keycloak
           uri:
-            url: "http://localhost:8180/auth/admin/realms/master\
-              /users?username=johnson"
-            headers:
-              Authorization: "bearer {{ token }}"
-            return_content: yes
-          register: user_register
-          failed_when: user_register.json == []
-      rescue:
-        - name: Create realm user
-          uri:
-            url: "http://localhost:8180/auth/admin/realms/master\
-              /users?realm=master"
-            method: POST
-            headers:
-              Accept: application/json
-              Authorization: "bearer {{ token }}"
-            body_format: json
-            body:
-              username: johnson
-              email: johnson@localhost
-              enabled: 'true'
-              emailVerified: 'true'
-              credentials:
-                - type: password
-                  value: password
-            status_code: 201
-            return_content: yes
-          changed_when: true
-          register: user_register
-
-    - block:
-        - name: Check if kong is registered with keycloak
-          uri:
-            url: http://localhost:8001/plugins?name=oidc
+            url: http://localhost:8001/services/webapp-service/plugins?name=oidc
             return_content: yes
           register: endpoint_configure
           failed_when: endpoint_configure.json.data == []
       rescue:
-        - name: Configure kong with keycloak
+        - name: Configure webapp with keycloak
           uri:
-            url: http://localhost:8001/plugins
+            url: http://localhost:8001/services/webapp-service/plugins
             method: POST
             body_format: json
             body:
               name: oidc
-              config.client_id: kong
+              config.client_id: webapp
               config.client_secret: "{{ client_secret.json.value }}"
               config.discovery: "http://{{ ansible_eth1.ipv4.address }}:\
                 8180/auth/realms/master/.well-known/openid-configuration"
@@ -115,8 +82,8 @@
   always:
     - name: Logout with KeyCloak
       uri:
-        url: "http://localhost:8180/auth/realms/master\
-          /protocol/openid-connect/logout"
+        url: "http://localhost:8180/auth/realms/master/protocol/openid-connect\
+          /logout"
         method: POST
         body_format: form-urlencoded
         body:

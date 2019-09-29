@@ -1,0 +1,115 @@
+import logging
+import os
+from fastapi import Depends, FastAPI
+from pydantic import BaseModel
+from urllib.parse import urlencode
+from starlette.responses import PlainTextResponse, RedirectResponse
+# Client
+from oic.oic import Client
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from oic.oic.message import RegistrationResponse
+# Authorization Code Flow
+from oic import rndstr
+from oic.utils.http_util import Redirect
+# Response
+from oic.oauth2 import AuthorizationResponse
+import inspect
+
+class OIDC(object):
+    def __init__(self):
+        if 'OIDC_BASE_URL' in os.environ:
+            base_url = os.environ.get('OIDC_BASE_URL')
+        if 'OIDC_CLIENT_ID' in os.environ:
+            client_id = os.environ.get('OIDC_CLIENT_ID')
+        if 'OIDC_CLIENT_SECRET' in os.environ:
+            client_secret = os.environ.get('OIDC_CLIENT_SECRET')
+
+        self.client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
+        self.client.provider_config(base_url)
+
+        settings = {'client_id': client_id, 'client_secret': client_secret}
+        client_reg = RegistrationResponse(**settings)
+        self.client.store_registration_info(client_reg)
+ 
+    def get_authorization(self):
+        self.state = rndstr()
+        nonce = rndstr()
+    
+        args = {
+            'client_id': self.client.client_id,
+            'response_type': 'code',
+            'scope': ['openid'],
+            'nonce': nonce,
+            'redirect_uri': 'http://localhost:5000/items',
+            'state': self.state
+        }
+        auth_req = self.client.construct_AuthorizationRequest(request_args=args)
+        login_url = auth_req.request(self.client.authorization_endpoint)
+        return RedirectResponse(url=login_url)
+    
+    def get_authorization_response(self):
+        authorization_response = self.client.parse_response(
+            AuthorizationResponse,
+            info=request.args,
+            sformat='dict')
+        return authorization_response
+    
+    def get_access_token(self, aresp):
+        args = {
+            'code': aresp['code'],
+            'client_id': self.client.client_id,
+            'client_secret': self.client.client_secret,
+            'redirect_uri': 'http://localhost:5000/items',
+        }
+    
+        return self.client.do_access_token_request(
+            scope=['openid'],
+            state=aresp['state'],
+            request_args=args,
+            authn_method='client_secret_post')
+    
+    def get_userinfo(self, authorization_response):
+        # self.client = get_client()
+        get_access_token(authorization_response)
+        user_info = self.client.do_user_info_request(
+            state=authorization_response['state'],
+            authn_method='client_secret_post')
+        return user_info.to_dict()
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+oidc = OIDC()
+app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    price: float
+    is_offer: bool = None
+
+
+@app.get("/")
+async def root():
+    response = oidc.get_authorization()
+    return response
+# {"message": "Hello World"}
+
+@app.get("/items/{item_id}")
+async def read_item(item_id: int, q: str = None):
+    return {"item_id": item_id, "q": q}
+
+@app.put("/items/{item_id}")
+async def update_item(item_id: int, item: Item):
+    return {"item_name": item.name, "item_id": item_id}
+
+# @app.route('/login')
+# async def login():
+#     self.client = get_client()
+#     return Redirect(get_authorization())
+#
+# @app.route('/oidc-callback')
+# def auth_callback():
+#     self.client = get_client()
+#     aresp = get_authorization_response(self.client)
+#     session['user_info'] = self.client.get_userinfo(self.client, aresp)
+#     return redirect(url_for('index'))

@@ -1,0 +1,90 @@
+---
+- name: Check if WebApp DB is running
+  docker_container_info:
+    name: webapp-db
+  register: webapp_db_state
+
+- block:
+    - name: Start WebApp DB
+      docker_container:
+        name: webapp-db
+        image: postgres:9.6
+        volumes:
+          - webapp-datastore:/var/lib/postresql/data
+        networks_cli_compatible: true
+        networks:
+          - name: webapp-net
+        exposed_ports:
+          - '35432:5432'
+        env:
+          POSTGRES_DB: webapp
+          POSTGRES_USER: webapp
+          POSTGRES_PASSWORD: password
+      register: webapp_db_register
+
+    - name: Wait for WebApp DB to accept connections
+      wait_for:
+        host: "{{ webapp_db_register['ansible_facts']\
+          ['docker_container']\
+          ['NetworkSettings']\
+          ['Networks']\
+          ['webapp-net']\
+          ['IPAddress'] }}"
+        port: 5432
+        state: started
+        connect_timeout: 1
+        timeout: 30
+      register: webapp_db_running
+      until: webapp_db_running is success
+      retries: 10
+  when: not webapp_db_state.exists
+
+- name: Check if WebApp DB is running
+  docker_container_info:
+    name: webapp
+  register: webapp_state
+
+- block:
+    - name: Start WebApp
+      docker_container:
+        name: webapp
+        image: hijynx/webapp:v1.0
+        networks_cli_compatible: true
+        networks:
+          - name: api-net
+            links:
+              - kong
+              - keycloak
+          - name: webapp-net
+            links:
+              - webapp-db
+        ports:
+          - '3000:3000'
+        env:
+          DB_VENDOR: POSTGRES
+          DB_ADDR: webapp-db
+          DB_PORT: '5432'
+          DB_DATABASE: webapp
+          DB_USER: webapp
+          DB_PASSWORD: password
+          WEBAPP_USER: admin
+          WEBAPP_PASSWORD: admin
+      register: webapp_register
+
+    - name: Wait for WebApp to accept connections
+      wait_for:
+        host: "{{ webapp_register['ansible_facts']\
+          ['docker_container']\
+          ['NetworkSettings']\
+          ['Networks']\
+          ['webapp-net']\
+          ['IPAddress'] }}"
+        port: 3000
+        state: started
+        connect_timeout: 1
+        timeout: 30
+      register: webapp_running
+      until: webapp_running is success
+      retries: 10
+  when: not webapp_state.exists
+...

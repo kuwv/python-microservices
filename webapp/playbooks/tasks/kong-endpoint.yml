@@ -1,0 +1,63 @@
+---
+- name: Verify OIDC plugin is loaded in Kong
+  uri:
+    url: http://localhost:8001
+    return_content: yes
+  register: plugin_register
+  until: plugin_register.json.plugins.available_on_server.oidc|d(false)
+  retries: 10
+
+- block:
+    - name: Check if webapp service is loaded in Kong
+      uri:
+        url: http://localhost:8001/services/webapp-service
+      register: service_register
+      failed_when: service_register.json.id is undefined
+  rescue:
+    - name: Add webapp service to Kong
+      uri:
+        url: http://localhost:8001/services
+        method: POST
+        body_format: form-urlencoded
+        body:
+          name: webapp-service
+          url: http://webapp:3000/api
+        return_content: yes
+        status_code: 201
+      register: service_register
+      changed_when: true
+
+- name: Debug service register
+  debug:
+    var: service_register
+    verbosity: 1
+
+- name: Retrieve webapp service ID
+  set_fact:
+    sid: "{{ service_register.json.id }}"
+
+- block:
+    - name: Check if webapp route is loaded in Kong
+      uri:
+        url: "http://localhost:8001/services/{{ sid }}/routes"
+      register: route_register
+      failed_when: route_register.json.data == []
+  rescue:
+    - name: Register route in Kong
+      uri:
+        url: http://localhost:8001/routes
+        method: POST
+        body_format: form-urlencoded
+        body:
+          service.id: "{{ sid }}"
+          paths[]: /webapp
+        return_content: yes
+        status_code: 201
+      register: route_register
+      changed_when: true
+
+- name: Debug route register
+  debug:
+    var: route_register
+    verbosity: 1
+...

@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+pbr = "*"
+passlib = "*"
+fastapi = "*"
+oic = "*"
+databases = "*"
+email-validator = "*"
+# [requires]
+# python_version = "3.6"
+daphne = "*"
+
+[scripts]
+daphne = "daphne -b 0.0.0.0 -p 3000 app:app"
+hypercorn = "hypercorn -b 0.0.0.0:3000 app:app --reload"
+package = "python setup.py bdist_wheel"
