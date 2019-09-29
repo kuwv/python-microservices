@@ -28,7 +28,7 @@
         auth_realm: master
         auth_username: admin
         auth_password: admin
-        client_id: kong
+        client_id: kong-oidc
         id: "{{ sid }}"
         protocol: openid-connect
         public_client: false

@@ -48,12 +48,16 @@
     - name: Start KeyCloak
       docker_container:
         name: keycloak
-        image: jboss/keycloak:4.5.0.Final
+        image: jboss/keycloak:7.0.0
         networks_cli_compatible: true
         networks:
           - name: keycloak-net
             links:
               - keycloak-db
+          - name: api-net
+            links:
+              - webapp
+              - kong
         ports:
           - '8180:8080'
         env:

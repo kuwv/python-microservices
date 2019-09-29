@@ -6,8 +6,16 @@ start-sso:
 stop-sso:
 	ansible-playbook -i localhost, sso/deploy.yml --tags=remove -e sso_volume_state=absent
 
+.PHONY: start-webapp
+start-webapp:
+	ansible-playbook -i localhost, webapp/deploy.yml -vvv
+
+.PHONY: stop-webapp
+stop-webapp:
+	ansible-playbook -i localhost, webapp/deploy.yml --tags=remove -e webapp_volume_state=absent
+
 .PHONY: start
-start: start-sso
+start: start-sso start-webapp
 
 .PHONY: stop
-stop: stop-sso
+stop: stop-webapp stop-sso
