@@ -1,0 +1,15 @@
+# Project
+Makefile
+
+# Git
+.git/
+.gitattributes
+.gitignore
+
+# Python
+.Python
+**/__pycache__
+**/*.py[cod]
+env/
+.env
+*.log

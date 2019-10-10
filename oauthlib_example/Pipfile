@@ -9,14 +9,12 @@ verify_ssl = true
 pbr = "*"
 passlib = "*"
 fastapi = "*"
-oic = "*"
 databases = "*"
-email-validator = "*"
-# [requires]
-# python_version = "3.6"
 daphne = "*"
 python-multipart = "*"
 pyjwt = "*"
+oauthlib = "*"
+email-validator = "*"
 
 [scripts]
 daphne = "bash -c 'daphne -b 0.0.0.0 -p 3000 app:app &'"

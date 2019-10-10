@@ -28,7 +28,7 @@
         auth_realm: master
         auth_username: admin
         auth_password: admin
-        client_id: kong-oidc
+        client_id: api-gw
         id: "{{ sid }}"
         protocol: openid-connect
         public_client: false
@@ -103,7 +103,7 @@
             body_format: json
             body:
               name: oidc
-              config.client_id: kong
+              config.client_id: api-gw
               config.client_secret: "{{ client_secret.json.value }}"
               config.discovery: "http://{{ ansible_eth1.ipv4.address }}:\
                 8180/auth/realms/master/.well-known/openid-configuration"

@@ -1,0 +1,19 @@
+---
+- name: Setup network for webapp
+  docker_network:
+    name: "{{ item }}"
+    state: "{{ webapp_network_state | d('present') }}"
+  loop:
+    - webapp-net
+  tags:
+    - networks
+
+- name: Setup volumes for webapp
+  docker_volume:
+    name: "{{ item }}"
+    state: "{{ webapp_volume_state | d('present') }}"
+  loop:
+    - webapp-datastore
+  tags:
+    - volumes
+...
