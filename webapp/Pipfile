@@ -4,6 +4,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+uvicorn = "*"
+hypercorn = "*"
 
 [packages]
 pbr = "*"
@@ -12,13 +14,14 @@ fastapi = "*"
 oic = "*"
 databases = "*"
 email-validator = "*"
-# [requires]
-# python_version = "3.6"
 daphne = "*"
 python-multipart = "*"
 pyjwt = "*"
+authlib = "*"
+httpx = "*"
 
 [scripts]
+requirements = "bash -c 'pipenv lock -r > requirements.txt'"
 daphne = "bash -c 'daphne -b 0.0.0.0 -p 3000 app:app &'"
 hypercorn = "bash -c 'hypercorn -b 0.0.0.0:3000 app:app --reload &'"
 uvicorn = "bash -c 'uvicorn --host 0.0.0.0 --port 3000 app:app --reload &'"

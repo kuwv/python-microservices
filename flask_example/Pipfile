@@ -12,8 +12,6 @@ fastapi = "*"
 oic = "*"
 databases = "*"
 email-validator = "*"
-# [requires]
-# python_version = "3.6"
 hypercorn = "*"
 
 [scripts]
