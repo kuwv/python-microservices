@@ -10,9 +10,7 @@ jwks = JWKS.parse_obj(
         "http://localhost:8180/auth/realms/master/protocol/openid-connect/certs"
     ).json()
 )
-authorization_url="http://localhost:8180/auth/realms/master/protocol/openid-connect/auth"
-token_url="http://localhost:8180/auth/realms/master/protocol/openid-connect/token"
-auth = JWTBearer(authorization_url, token_url, jwks)
+auth = JWTBearer(jwks)
 
 
 async def get_current_user(

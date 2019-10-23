@@ -3,8 +3,8 @@ import os
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel
 from urllib.parse import urlencode
+from starlette.requests import Request
 from starlette.responses import PlainTextResponse, RedirectResponse
-from oauth.authorization import OAuth2AuthorizationCodeBearer
 from oauth.resource_protector import ResourceProtector
 
 # JWT
@@ -17,20 +17,21 @@ app = FastAPI()
 
 authorization_url="http://localhost:8180/auth/realms/master/protocol/openid-connect/auth"
 token_url="http://localhost:8180/auth/realms/master/protocol/openid-connect/token"
-auth = JWTBearer(authorization_url, token_url, jwks)
+auth = JWTBearer(jwks)
 
-oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    authorizationUrl=authorization_url,
-    tokenUrl=token_url,
+oauth2_scheme = ResourceProtector(
+    authorization_url=authorization_url,
+    token_url=token_url,
     auto_error=False
 )
+oauth2_scheme.register_token_validator(JWTBearer(jwks))
 
 class Item(BaseModel):
     name: str
     price: float
     is_offer: bool = None
 
-@app.get("/secure", dependencies=[Depends(auth)])
+@app.get("/secure", dependencies=[Depends(oauth2_scheme)])
 async def secure() -> bool:
     return True
 
