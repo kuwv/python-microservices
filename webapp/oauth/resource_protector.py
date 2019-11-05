@@ -5,13 +5,9 @@ from typing import Any, Dict, Optional, List
 
 from starlette.requests import Request
 
-from authlib.oauth2 import (
-    OAuth2Error,
-    ResourceProtector as _ResourceProtector
-)
+from authlib.oauth2 import ResourceProtector as _ResourceProtector
 from authlib.oauth2.rfc6749 import MissingAuthorizationError
-# from .signals import token_authenticated
-from .errors import raise_http_exception
+from .errors import oauth_exception
 from .authorization import OAuth2AuthorizationCodeBearer
 import traceback
 import logging
@@ -62,18 +58,7 @@ class ResourceProtector(_ResourceProtector, OAuth2AuthorizationCodeBearer):
             auto_error=auto_error
         )
 
-    def raise_error_response(self, error):
-        """Raise HTTPException for OAuth2Error. Developers can re-implement
-        this method to customize the error response.
-
-        :param error: OAuth2Error
-        :raise: HTTPException
-        """
-        status = error.status_code
-        body = json.dumps(dict(error.get_body()))
-        headers = error.get_headers()
-        raise_http_exception(status, body, headers)
-
+    @oauth_exception
     async def acquire_token(
          self,
          request: Request,
@@ -99,7 +84,4 @@ class ResourceProtector(_ResourceProtector, OAuth2AuthorizationCodeBearer):
         operator: str = 'AND',
         optional: bool = False
     ):
-        try:
-            return await self.acquire_token(request, scope, operator)
-        except OAuth2Error as error:
-            self.raise_error_response(error)
+        return await self.acquire_token(request, scope, operator)
