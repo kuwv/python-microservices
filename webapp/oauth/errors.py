@@ -19,6 +19,9 @@ from jwt.exceptions import (
 
 
 def oauth_exception(fn):
+    '''
+    Decorator to provid exceptions for OAuth2
+    '''
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         try:
@@ -26,15 +29,14 @@ def oauth_exception(fn):
         except OAuth2Error:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="oauth2 - JWK public key not found"
+                detail='oauth2 - JWK public key not found'
             )
     return wrapper
 
 def token_exception(fn):
-    """
-    A decorator that wraps the passed in function and logs 
-    exceptions should one occur
-    """
+    '''
+    Decorector to provide exceptions for JWT validation
+    '''
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         try:
@@ -42,56 +44,67 @@ def token_exception(fn):
         except KeyError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - JWK public key not found"
+                detail='invalid_token - JWK public key not found',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except DecodeError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token cannot be decoded"
+                detail='invalid_token - Authorization token cannot be decoded',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except ExpiredSignatureError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token has expired"
+                detail='invalid_token - Authorization token has expired',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except ImmatureSignatureError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token immature"
+                detail='invalid_token - Authorization token immature',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except InvalidAlgorithmError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token invalid algorithm"
+                detail='invalid_token - Authorization token invalid algorithm',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except InvalidAudienceError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token invalid audience"
+                detail='invalid_token - Authorization token invalid audience',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except InvalidKeyError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token invalid key error"
+                detail='invalid_token - Authorization token invalid key error',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except InvalidIssuedAtError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token invalid issue time"
+                detail='invalid_token - Authorization token invalid issue time',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except InvalidIssuerError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token from unrecognized issuer"
+                detail='invalid_token - Authorization token from unrecognized issuer',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except InvalidTokenError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token invalid"
+                detail='invalid_token - Authorization token invalid',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
         except MissingRequiredClaimError:
             raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
-                detail="invalid_token - Authorization token missing claim(s)"
+                detail='invalid_token - Authorization token missing claim(s)',
+                headers={'WWW-Authenticate': 'Bearer'}
             )
     return wrapper

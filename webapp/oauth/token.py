@@ -14,7 +14,7 @@ from jwt.exceptions import (
     InvalidIssuerError,
 )
 
-from .authorization import OAuth2AuthorizationCodeBearer
+from .models import OAuth2AuthorizationCodeBearer
 from .errors import token_exception
 from authlib.oauth2.rfc6750 import BearerTokenValidator
 

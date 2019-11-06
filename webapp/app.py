@@ -9,16 +9,31 @@ from starlette.responses import PlainTextResponse, RedirectResponse
 from oauth.resource_protector import ResourceProtector
 
 # JWT
-from oauth.token import JWKS, JWTBearer
-# from oauth.auth import jwks
+from oauth.token import JWK, JWKS, JWTBearer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 app = FastAPI()
 
-authorization_url="http://localhost:8180/auth/realms/master/protocol/openid-connect/auth"
-token_url="http://localhost:8180/auth/realms/master/protocol/openid-connect/token"
-jwks_uri="http://localhost:8180/auth/realms/master/protocol/openid-connect/certs"
+auth_protocol=os.getenv("AUTH_PROTOCOL", "http")
+auth_host=os.getenv("AUTH_HOST", "localhost")
+auth_port=os.getenv("AUTH_PORT", "8180")
+auth_url=os.getenv(
+    "AUTH_URL",
+    f"{auth_protocol}://{auth_host}:{auth_port}/auth"
+)
+authorization_url=os.getenv(
+    "WEBAPP_AUTH_URL",
+    f"{auth_url}/realms/master/protocol/openid-connect/auth"
+)
+token_url=os.getenv(
+    "WEBAPP_TOKEN_URL",
+    f"{auth_url}/realms/master/protocol/openid-connect/token"
+)
+jwks_uri=os.getenv(
+    "WEBAPP_JWKS_URI",
+    f"{auth_url}/realms/master/protocol/openid-connect/certs"
+)
 
 oauth2_scheme = ResourceProtector(
     authorization_url=authorization_url,
@@ -41,7 +56,7 @@ async def secure() -> bool:
 async def not_secure() -> bool:
     return True
 
-@app.get("/token")
+@app.get("/token", response_model=JWK)
 async def read_items(token: str = Depends(oauth2_scheme)):
     if token is None:
         return {"msg": "No token found"}

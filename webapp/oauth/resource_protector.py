@@ -8,7 +8,7 @@ from starlette.requests import Request
 from authlib.oauth2 import ResourceProtector as _ResourceProtector
 from authlib.oauth2.rfc6749 import MissingAuthorizationError
 from .errors import oauth_exception
-from .authorization import OAuth2AuthorizationCodeBearer
+from .models import OAuth2AuthorizationCodeBearer
 import traceback
 import logging
 
