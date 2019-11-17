@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-hypercorn = "*"
+hypercorn = {extras = ["uvloop"],version = "*"}
 uvicorn = "*"
 
 [packages]
@@ -19,6 +19,8 @@ python-multipart = "*"
 pyjwt = "*"
 authlib = "*"
 httpx = "*"
+uvicorn = "*"
+twisted = {extras = ["http2", "tls"],version = "*"}
 
 [scripts]
 requirements = "bash -c 'pipenv lock -r > requirements.txt'"

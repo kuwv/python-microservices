@@ -10,7 +10,6 @@ class OAuth2AuthorizationCodeBearer(OAuth2):
         self,
         authorizationUrl: str,
         tokenUrl: str,
-        client_id: str = None,
         scheme_name: str = None,
         scopes: dict = None,
         auto_error: bool = True,
