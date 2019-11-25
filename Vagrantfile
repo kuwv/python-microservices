@@ -64,7 +64,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8001, host: 8001
   config.vm.network "forwarded_port", guest: 8444, host: 8444
   # KeyCloak
-  config.vm.network "forwarded_port", guest: 8180, host: 8180
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   config.vm.provision "base", type: "shell", inline: $base
   config.vm.provision "docker", type: "shell", inline: $docker
@@ -76,7 +76,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "remove", type: "ansible_local", run: "never" do |ansible|
-    ansible.playbook = "sso/deploy.yml"
+    ansible.playbook = "deploy.yml"
     ansible.tags = 'remove'
     ansible.extra_vars = {
       sso_purge_volumes: true

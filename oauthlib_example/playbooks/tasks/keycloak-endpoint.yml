@@ -2,7 +2,7 @@
 - block:
     - name: Authenticate with KeyCloak
       uri:
-        url: "http://localhost:8180/auth/realms/master\
+        url: "http://localhost:8080/auth/realms/master\
           /protocol/openid-connect/token"
         method: POST
         body_format: form-urlencoded
@@ -24,7 +24,7 @@
     - name: Create KeyCloak client
       keycloak_client:
         auth_client_id: admin-cli
-        auth_keycloak_url: http://localhost:8180/auth
+        auth_keycloak_url: http://localhost:8080/auth
         auth_realm: master
         auth_username: admin
         auth_password: admin
@@ -47,7 +47,7 @@
 
     - name: Retrieve client secret
       uri:
-        url: "http://localhost:8180/auth/admin/realms/master/clients\
+        url: "http://localhost:8080/auth/admin/realms/master/clients\
           /{{ cid }}/client-secret"
         headers:
           Authorization: "bearer {{ token }}"
@@ -72,7 +72,7 @@
               config.client_id: webapp
               config.client_secret: "{{ client_secret.json.value }}"
               config.discovery: "http://{{ ansible_eth1.ipv4.address }}:\
-                8180/auth/realms/master/.well-known/openid-configuration"
+                8080/auth/realms/master/.well-known/openid-configuration"
             timeout: 300
             status_code: 201
             return_content: yes
@@ -82,7 +82,7 @@
   always:
     - name: Logout with KeyCloak
       uri:
-        url: "http://localhost:8180/auth/realms/master/protocol/openid-connect\
+        url: "http://localhost:8080/auth/realms/master/protocol/openid-connect\
           /logout"
         method: POST
         body_format: form-urlencoded

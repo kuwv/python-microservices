@@ -7,7 +7,7 @@ from token import JWKS, JWTBearer, JWTAuthorizationCredentials
 
 jwks = JWKS.parse_obj(
     requests.get(
-        "http://localhost:8180/auth/realms/master/protocol/openid-connect/certs"
+        "http://localhost:8080/auth/realms/master/protocol/openid-connect/certs"
     ).json()
 )
 auth = JWTBearer(jwks)

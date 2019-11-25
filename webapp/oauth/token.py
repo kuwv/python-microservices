@@ -1,8 +1,11 @@
 from typing import Any, Dict, Optional, List
 from pydantic import BaseModel, ValidationError
 from starlette.requests import Request
-from fastapi.security import (
-    SecurityScopes
+from fastapi.security import SecurityScopes
+from fastapi import HTTPException
+from starlette.status import (
+    HTTP_401_UNAUTHORIZED,
+    HTTP_403_FORBIDDEN
 )
 import json
 import jwt
@@ -13,7 +16,7 @@ import jwt
 # from authlib.jose import jwk
 
 from authlib.oauth2.rfc6750 import BearerTokenValidator
-from .logging import JWTAuditAuthentication
+from .logging import JWTAudit
 
 
 # https://tools.ietf.org/html/rfc7517#page-5
@@ -25,9 +28,9 @@ class JWKS(BaseModel):
 class JWTAuthorizationCredentials(BaseModel):
     token_string: str
     header: Dict[str, str]
-    claims: Dict[str, str]
-    signature: str
+    claims: Dict[str, Any]
     message: str
+    signature: str
 
 
 class JWTBearerTokenValidator(BearerTokenValidator):
@@ -43,7 +46,7 @@ class JWTBearerTokenValidator(BearerTokenValidator):
         self.config = config
         super().__init__(realm)
 
-    @JWTAuditAuthentication()
+    @JWTAudit()
     def authenticate_token(self, token_string: str) -> bool:
         # TODO: Handle JKU
         kid = self.credentials.header['kid']
@@ -60,7 +63,7 @@ class JWTBearerTokenValidator(BearerTokenValidator):
             **self.config
         )
 
-    def request_invalid(self, request: Request) -> bool:
+    def request_invalid(self, request: Request, scope: str = None) -> bool:
         """
         Check if the HTTP request is valid or not.
         """
@@ -71,6 +74,13 @@ class JWTBearerTokenValidator(BearerTokenValidator):
                 for k in h.keys():
                     if h[k] != self.credentials.claims[k]:
                         return True
+        for s in scope:
+            if s not in self.credentials.claims['scope']:
+                raise HTTPException(
+                    status_code=HTTP_401_UNAUTHORIZED,
+                    detail="Unauthorized",
+                    headers={"WWW-Authenticate": "bearer"},
+                )
         return False
 
     def token_revoked(self, token: str) -> bool:
@@ -79,6 +89,7 @@ class JWTBearerTokenValidator(BearerTokenValidator):
         Query introspection when:
           - if MAC based
           - if JWT lifetime (exp) is higher than config policy
+          - if refresh token for client
         Requires client for RPT
         """
         return False
@@ -95,9 +106,9 @@ class JWTBearerTokenValidator(BearerTokenValidator):
             token_string=token_string,
             header=jwt.get_unverified_header(token_string),
             claims=jwt.decode(token_string, verify=False),
-            signature=signature,
-            message=message
+            message=message,
+            signature=signature
         )
-        self.request_invalid(request)
+        self.request_invalid(request, scope)
         self.authenticate_token(token_string)
         return self.credentials

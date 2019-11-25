@@ -1,4 +1,5 @@
 import logging
+import traceback
 from functools import wraps
 from fastapi import HTTPException
 from starlette.status import (
@@ -6,6 +7,22 @@ from starlette.status import (
     HTTP_403_FORBIDDEN
 )
 from authlib.oauth2 import OAuth2Error
+from authlib.oauth2.rfc6749 import(
+    InsecureTransportError,
+    InvalidRequestError,
+    InvalidClientError,
+    InvalidGrantError,
+    UnauthorizedClientError,
+    UnsupportedGrantTypeError,
+    InvalidScopeError,
+    AccessDeniedError,
+    MissingAuthorizationError,
+    UnsupportedTokenTypeError,
+    MissingCodeException,
+    MissingTokenException,
+    MissingTokenTypeException,
+    MismatchingStateException,
+)
 from jwt.exceptions import (
     DecodeError,
     ExpiredSignatureError,
@@ -49,18 +66,90 @@ def audit():
         return wrapper
     return audit_wrapper
 
-
-class JWTAuditAuthentication(object):
-    def __init__(self):
-        self.logger = logging.getLogger('audit')
-
+class HTTPAuditMixin(object):
     def _http_exception(self, detail):
         self.logger.warning(detail)
         return HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
-            detail=f"{detail}",
+            detail=detail,
             headers={'WWW-Authenticate': 'Bearer'}
         )
+
+class OAuth2Audit(HTTPAuditMixin):
+    def __init__(self):
+        self.logger = logging.getLogger('oauth')
+
+    def __call__(self, fn):
+        """Decorector to audit JWT validation"""
+        @wraps(fn)
+        async def wrapper(*args, **kwargs):
+            try:
+                return await fn(*args, **kwargs)
+            except OAuth2Error:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except InsecureTransportError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except InvalidRequestError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except InvalidClientError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except InvalidGrantError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except UnauthorizedClientError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except UnsupportedGrantTypeError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except InvalidScopeError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except AccessDeniedError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except MissingAuthorizationError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except UnsupportedTokenTypeError:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except MissingCodeException:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except MissingTokenException:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except MissingTokenTypeException:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+            except MismatchingStateException:
+                raise self._http_exception(
+                    'unauthorized - access denied'
+                )
+        return wrapper
+
+class JWTAudit(HTTPAuditMixin):
+    def __init__(self):
+        self.logger = logging.getLogger('jwt')
 
     def __call__(self, fn):
         """Decorector to audit JWT validation"""
@@ -68,12 +157,8 @@ class JWTAuditAuthentication(object):
         def wrapper(*args, **kwargs):
             try:
                 token = fn(*args, **kwargs)
-                logger.info(f"{token['preferred_username']} accessd ")
+                logger.info(f"{token['preferred_username']} accessed ")
                 return token
-            except OAuth2Error:
-                raise self._http_exception(
-                    'invalid_token - JWK public key not found'
-                )
             except KeyError:
                 raise self._http_exception(
                     'invalid_token - JWK public key not found',
@@ -106,10 +191,6 @@ class JWTAuditAuthentication(object):
                 raise self._http_exception(
                     'invalid_token - Authorization token from unrecognized issuer'
                 )
-            except InvalidTokenError:
-                raise self._http_exception(
-                    'invalid_token - Authorization token invalid'
-                )
             except InvalidAudienceError:
                 raise self._http_exception(
                     'invalid_token - Authorization token invalid audience',
@@ -117,5 +198,9 @@ class JWTAuditAuthentication(object):
             except MissingRequiredClaimError:
                 raise self._http_exception(
                     'invalid_token - Authorization token missing required claims'
+                )
+            except InvalidTokenError:
+                raise self._http_exception(
+                    'invalid_token - Authorization token invalid'
                 )
         return wrapper

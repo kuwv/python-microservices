@@ -1,0 +1,11 @@
+---
+- name: Setup SSO
+  import_playbook: sso/deploy.yml
+  tags:
+    - sso
+
+- name: Remove Webapp
+  import_playbook: webapp/deploy.yml
+  tags:
+    - webapp
+...

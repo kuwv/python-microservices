@@ -1,8 +1,9 @@
 ---
 - name: Build webapp image
   docker_image:
-    name: hijynx/webapp:v1.0
+    name: hijynx/webapp:v1.1
     source: build
+    nocache: yes
     build:
       pull: yes
       path: ../
@@ -57,7 +58,7 @@
     - name: Start WebApp
       docker_container:
         name: webapp
-        image: hijynx/webapp:v1.0
+        image: hijynx/webapp:v1.1
         networks_cli_compatible: true
         networks:
           - name: api-net
@@ -78,6 +79,7 @@
           DB_PASSWORD: password
           WEBAPP_USER: admin
           WEBAPP_PASSWORD: admin
+          WEBAPP_SVC_AUTH_HOST: keycloak
       register: webapp_register
 
     - name: Wait for WebApp to accept connections

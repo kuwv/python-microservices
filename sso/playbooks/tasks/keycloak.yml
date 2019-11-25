@@ -59,7 +59,7 @@
               - webapp
               - kong
         ports:
-          - '8180:8080'
+          - '8080:8080'
         env:
           DB_VENDOR: POSTGRES
           DB_ADDR: keycloak-db
