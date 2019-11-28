@@ -49,16 +49,16 @@ headers: List[Dict] = [{'email_verified': True}]
 
 # PyJWT configuration
 audience: str = [f"{auth_realm}-realm"]
-issuer: str = None
-leeway: int = 0
+issuer: str = os.getenv("WEBAPP_AUTH_ISSUER", None)
+leeway: int = os.getenv("WEBAPP_AUTH_LEEWAY", 0)
 options: Dict = {
-    "verify_aud": True,
-    "verify_exp": True,
-    "verify_iat": True,
-    "verify_iss": True,
-    "verify_nbf": True,
-    "verify_signature": True,
-    "require_exp": True,
-    "require_iat": True,
-    "require_nbf": True
+    "verify_aud": os.getenv("WEBAPP_VERIFY_AUD", True),
+    "verify_exp": os.getenv("WEBAPP_VERIFY_EXP", True),
+    "verify_iat": os.getenv("WEBAPP_VERIFY_IAT", True),
+    "verify_iss": os.getenv("WEBAPP_VERIFY_ISS", True),
+    "verify_nbf": os.getenv("WEBAPP_VERIFY_NBF", True),
+    "verify_signature": os.getenv("WEBAPP_VERIFY_SIGNATURE", True),
+    "require_exp": os.getenv("WEBAPP_REQUIRE_EXP", True),
+    "require_iat": os.getenv("WEBAPP_REQUIRE_IAT", True),
+    "require_nbf": os.getenv("WEBAPP_REQUIRE_NFS", True)
 }
