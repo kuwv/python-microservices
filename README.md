@@ -3,9 +3,9 @@
 
 ## Index
 
-* [ License ](license.md)
-1. [SSO setup - Using Ansible to deploy KeyCloak / Kong](./sso/readme.md)
-2. [Webapp setup - Setup web application to auth to KeyCloak](./webapp/readme.md)
+* [ License ](LISENCE.md)
+1. [SSO setup - Using Ansible to deploy KeyCloak / Kong](./sso/README.md)
+2. [Webapp setup - Setup web application to auth to KeyCloak](./webapp/README.md)
 
 
 ## Synopsis
