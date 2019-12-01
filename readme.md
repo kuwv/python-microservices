@@ -21,7 +21,7 @@ This project is intended as a starting point for creating microserices using Pyt
 
 Start VM with application
 ```
-vagrant up --provision-with base,docker,setup
+vagrant up --provision-with base,docker,setup -- -A
 ```
 
 Removing application from VM
