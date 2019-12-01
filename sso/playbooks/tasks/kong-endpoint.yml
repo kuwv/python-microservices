@@ -12,6 +12,7 @@
       uri:
         url: http://localhost:8001/services/mock-service
       register: service_register
+      failed_when: service_register.json.id is undefined
   rescue:
     - name: Add mock service to Kong
       uri:
@@ -32,7 +33,7 @@
 - block:
     - name: Check if mock route is loaded in Kong
       uri:
-        url: "http://localhost:8001/routes?service.id={{ sid }}"
+        url: "http://localhost:8001/services/{{ sid }}/routes"
       register: route_register
       failed_when: route_register.json.data == []
   rescue:

@@ -78,6 +78,10 @@
         image: kong:0.14-centos-oidc
         networks_cli_compatible: true
         networks:
+          - name: api-net
+            links:
+              - webapp
+              - keycloak
           - name: kong-net
             links:
               - kong-db

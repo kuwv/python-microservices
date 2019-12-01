@@ -23,12 +23,12 @@
     - name: Execute kong endpoint setup tasks
       import_tasks: tasks/kong-endpoint.yml
       tags:
-        - kong
+        - kong-endpoint
         - endpoint
 
     - name: Execute endpoint setup tasks
-      import_tasks: tasks/endpoint.yml
+      import_tasks: tasks/keycloak-endpoint.yml
       tags:
-        - keycloak
+        - keycloak-endpoint
         - endpoint
 ...
