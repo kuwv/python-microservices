@@ -53,6 +53,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.box = "bento/centos-7"
+  config.vm.provision "file", source: "~/.ssh", destination: "~/.ssh"
 
   config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
   # Development
@@ -71,7 +72,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "python", type: "shell", inline: $python
 
   config.vm.provision "setup", type: "ansible_local" do |ansible|
-    ansible.playbook = "sso/deploy.yml"
+    ansible.playbook = "deploy.yml"
     ansible.verbose = true
   end
 

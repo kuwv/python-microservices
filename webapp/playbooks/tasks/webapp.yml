@@ -3,11 +3,11 @@
   docker_image:
     name: hijynx/webapp:v1.1
     source: build
-    nocache: yes
     build:
       pull: yes
       path: ../
-    force: yes
+      nocache: yes
+    force_source: yes
 
 - name: Check if WebApp DB is running
   docker_container_info:

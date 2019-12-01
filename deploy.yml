@@ -4,7 +4,7 @@
   tags:
     - sso
 
-- name: Remove Webapp
+- name: Setup Webapp
   import_playbook: webapp/deploy.yml
   tags:
     - webapp
