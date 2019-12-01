@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.box = "bento/centos-7"
-  config.vm.provision "file", source: "~/.ssh", destination: "~/.ssh"
+  config.ssh.forward_agent = true
 
   config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
   # Development
@@ -78,7 +78,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "remove", type: "ansible_local", run: "never" do |ansible|
     ansible.playbook = "deploy.yml"
-    ansible.tags = 'remove'
+    ansible.tags = "remove"
     ansible.extra_vars = {
       sso_purge_volumes: true
     }
