@@ -22,12 +22,17 @@ This project is intended as a starting point for creating microserices using Pyt
 
 Start VM with application
 ```
-vagrant up --provision-with base,docker,setup -- -A
+vagrant up --provision-with base,docker,setup
 ```
 
 Removing application from VM
 ```
 vagrant up --provision-with remove
+```
+
+Login
+```
+vagrant ssh -- -A
 ```
 
 ### Using pipenv
