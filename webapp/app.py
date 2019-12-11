@@ -12,7 +12,9 @@ from oauth.resource_protector import ResourceProtector
 import pprint
 
 # JWT
-from oauth.token import JWK, JWKS, JWTBearerTokenValidator, JWTAuthorizationCredentials
+from oauth.token import (
+    JWK, JWKS, JWTBearerTokenValidator, JWTAuthorizationCredentials
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -38,6 +40,7 @@ auth.register_token_validator(
         options=config.options
     )
 )
+
 
 app = FastAPI()
 

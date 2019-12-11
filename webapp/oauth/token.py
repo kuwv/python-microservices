@@ -8,15 +8,14 @@ from starlette.status import (
     HTTP_403_FORBIDDEN
 )
 import json
-import jwt
+import base64
 
-# TODO: Issue with KeyCloak decode :(
-# from authlib.jose import JsonWebKey
-# from authlib.jose import JWK_ALGORITHMS
-# from authlib.jose import jwk
+from authlib.jose import jwk
+from authlib.jose import jwt
 
 from authlib.oauth2.rfc6750 import BearerTokenValidator
-from .logging import JWTAudit
+from .logging import AuthAudit
+from pprint import pprint
 
 
 # https://tools.ietf.org/html/rfc7517#page-5
@@ -32,6 +31,12 @@ class JWTAuthorizationCredentials(BaseModel):
     message: str
     signature: str
 
+class AuthorizationCredentials(BaseModel):
+    token_string: str
+    header: Optional[Dict[str, str]]
+    claims: Dict[str, Any]
+    message: Optional[str]
+    signature: Optional[str]
 
 class JWTBearerTokenValidator(BearerTokenValidator):
     def __init__(
@@ -46,24 +51,30 @@ class JWTBearerTokenValidator(BearerTokenValidator):
         self.config = config
         super().__init__(realm)
 
-    @JWTAudit()
+    # @AuthAudit()
     def authenticate_token(self, token_string: str) -> bool:
         # TODO: Handle JKU
-        kid = self.credentials.header['kid']
-        jwk = [k for k in self.jwks.keys if k['kid'] == kid][0]
+        header,message,signature = token_string.split('.')
+        padding = ("=" * ((4 - len(header) % 4) % 4))
+        headers = json.loads(base64.b64decode(header+padding).decode('utf8'))
+        matching_key = [k for k in self.jwks.keys if k['kid'] == headers['kid']][0]
 
-        # TODO: Check for HASH (oct)
-        if jwk['kty'] == 'RSA':
-            key = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
-        if jwk['kty'] == 'EC':
-            key = jwt.algorithms.ECAlgorithm.from_jwk(json.dumps(jwk))
+        key = jwk.loads(matching_key)
+        token = jwt.decode(token_string, key)
+        token.validate()
 
-        return jwt.decode(
-            self.credentials.token_string, key=key, algorithms=[jwk['alg']],
-            **self.config
+        # TODO: deprecate this
+        self.credentials = JWTAuthorizationCredentials(
+            token_string=token_string,
+            header=headers,
+            claims=token,
+            message=message,
+            signature=signature
         )
 
-    def request_invalid(self, request: Request, scope: str = None) -> bool:
+        return token
+
+    def request_invalid(self, request: Request) -> bool:
         """
         Check if the HTTP request is valid or not.
         """
@@ -74,13 +85,6 @@ class JWTBearerTokenValidator(BearerTokenValidator):
                 for k in h.keys():
                     if h[k] != self.credentials.claims[k]:
                         return True
-        for s in scope:
-            if s not in self.credentials.claims['scope']:
-                raise HTTPException(
-                    status_code=HTTP_401_UNAUTHORIZED,
-                    detail="Unauthorized",
-                    headers={"WWW-Authenticate": "bearer"},
-                )
         return False
 
     def token_revoked(self, token: str) -> bool:
@@ -101,14 +105,17 @@ class JWTBearerTokenValidator(BearerTokenValidator):
         request: Request,
         scope_operator: str = 'AND'
     ) -> Optional[JWTAuthorizationCredentials]:
-        message, signature = token_string.rsplit('.', 1)
-        self.credentials = JWTAuthorizationCredentials(
-            token_string=token_string,
-            header=jwt.get_unverified_header(token_string),
-            claims=jwt.decode(token_string, verify=False),
-            message=message,
-            signature=signature
-        )
-        self.request_invalid(request, scope)
-        self.authenticate_token(token_string)
+        if self.request_invalid(request):
+            raise InvalidRequestError()
+        token = self.authenticate_token(token_string)
+        if not token:
+            raise InvalidTokenError(realm=self.realm)
+        # TODO: JWTClaims does not implement get_expires_at()
+        # if self.token_expired(token):
+        #     raise InvalidTokenError(realm=self.realm)
+        if self.token_revoked(token):
+            raise InvalidTokenError(realm=self.realm)
+        # TODO: JWTClaims does not implement get_scope()
+        # if self.scope_insufficient(token, scope, scope_operator):
+        #     raise InsufficientScopeError()
         return self.credentials

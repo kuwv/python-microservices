@@ -25,6 +25,9 @@ refresh_url: str = os.getenv(
     f"{auth_url_base}/protocol/openid-connect/token"
 )
 
+# Connection between SSO and APP
+svc_auth_client_id: str = os.getenv("WEBAPP_SVC_AUTH_CLIENT_ID")
+svc_auth_client_secret: str = os.getenv("WEBAPP_SVC_AUTH_CLIENT_SECRET")
 svc_auth_connection: str = os.getenv(
     "WEBAPP_SVC_AUTH_CONNECTION", auth_connection
 )
@@ -48,11 +51,11 @@ realm: str = auth_realm
 headers: List[Dict] = [{'email_verified': True}]
 
 # PyJWT configuration
-audience: str = [f"{auth_realm}-realm"]
+audience: str = [f"{auth_realm}-realm", "account"]
 issuer: str = os.getenv("WEBAPP_AUTH_ISSUER", None)
 leeway: int = os.getenv("WEBAPP_AUTH_LEEWAY", 0)
 options: Dict = {
-    "verify_aud": os.getenv("WEBAPP_VERIFY_AUD", True),
+    "verify_aud": os.getenv("WEBAPP_VERIFY_AUD", False),
     "verify_exp": os.getenv("WEBAPP_VERIFY_EXP", True),
     "verify_iat": os.getenv("WEBAPP_VERIFY_IAT", True),
     "verify_iss": os.getenv("WEBAPP_VERIFY_ISS", True),

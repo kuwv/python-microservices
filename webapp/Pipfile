@@ -16,7 +16,6 @@ databases = "*"
 email-validator = "*"
 daphne = "*"
 python-multipart = "*"
-pyjwt = "*"
 authlib = "*"
 httpx = "*"
 twisted = {extras = ["http2", "tls"],version = "*"}

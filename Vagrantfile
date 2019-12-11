@@ -42,7 +42,7 @@ $docker = <<-DOCKER
 DOCKER
 
 $python = <<-PYTHON
-  yum install python36 python36-devel python36-setuptools -y
+  yum install gcc python36 python36-devel python36-setuptools -y
   /usr/bin/python3.6 -m ensurepip
   /usr/bin/pip3.6 install pipenv
 PYTHON
