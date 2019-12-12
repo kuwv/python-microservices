@@ -10,25 +10,21 @@
         - kong
         - keycloak
 
-    - name: Execute Kong setup tasks
-      import_tasks: tasks/kong.yml
-      tags:
-        - kong
-
-    - name: Execute KeyCloak setup tasks
-      import_tasks: tasks/keycloak.yml
+    - name: Execute endpoint setup tasks
+      import_tasks: tasks/webapp.yml
       tags:
         - keycloak
+        - endpoint
 
     - name: Execute kong endpoint setup tasks
       import_tasks: tasks/kong-endpoint.yml
       tags:
-        - kong-endpoint
+        - kong
         - endpoint
 
     - name: Execute endpoint setup tasks
       import_tasks: tasks/keycloak-endpoint.yml
       tags:
-        - keycloak-endpoint
+        - keycloak
         - endpoint
 ...

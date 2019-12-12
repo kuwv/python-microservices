@@ -1,0 +1,29 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+hypercorn = {extras = ["uvloop"],version = "*"}
+uvicorn = "*"
+
+[packages]
+pbr = "*"
+passlib = "*"
+fastapi = "*"
+oic = "*"
+databases = "*"
+email-validator = "*"
+daphne = "*"
+python-multipart = "*"
+authlib = "*"
+httpx = "*"
+twisted = {extras = ["http2", "tls"],version = "*"}
+
+[scripts]
+requirements = "bash -c 'pipenv lock -r > requirements.txt'"
+daphne = "bash -c 'daphne -b 0.0.0.0 -p 3000 app:app'"
+hypercorn = "bash -c 'hypercorn -b 0.0.0.0:3000 app:app --reload'"
+uvicorn = "bash -c 'uvicorn --host 0.0.0.0 --port 3000 app:app --reload'"
+kill = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
+package = "python setup.py bdist_wheel"

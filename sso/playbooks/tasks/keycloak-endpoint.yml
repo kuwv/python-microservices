@@ -2,7 +2,7 @@
 - block:
     - name: Authenticate with KeyCloak
       uri:
-        url: "http://localhost:8180/auth/realms/master\
+        url: "http://localhost:8080/auth/realms/master\
           /protocol/openid-connect/token"
         method: POST
         body_format: form-urlencoded
@@ -24,17 +24,17 @@
     - name: Create KeyCloak client
       keycloak_client:
         auth_client_id: admin-cli
-        auth_keycloak_url: http://localhost:8180/auth
+        auth_keycloak_url: http://localhost:8080/auth
         auth_realm: master
         auth_username: admin
         auth_password: admin
-        client_id: kong
+        client_id: api-gw
         id: "{{ sid }}"
         protocol: openid-connect
         public_client: false
         root_url: http://localhost:8000
         redirect_uris:
-          - /mock/*
+          - http://localhost:8000/mock/*
         direct_access_grants_enabled: true
         standard_flow_enabled: true
         client_authenticator_type: client-secret
@@ -47,7 +47,7 @@
 
     - name: Retrieve client secret
       uri:
-        url: "http://localhost:8180/auth/admin/realms/master/clients\
+        url: "http://localhost:8080/auth/admin/realms/master/clients\
           /{{ cid }}/client-secret"
         headers:
           Authorization: "bearer {{ token }}"
@@ -57,17 +57,18 @@
     - block:
         - name: Check if realm user exists
           uri:
-            url: "http://localhost:8180/auth/admin/realms/master\
+            url: "http://localhost:8080/auth/admin/realms/master\
               /users?username=johnson"
             headers:
               Authorization: "bearer {{ token }}"
             return_content: yes
           register: user_register
           failed_when: user_register.json == []
+          no_log: True
       rescue:
         - name: Create realm user
           uri:
-            url: "http://localhost:8180/auth/admin/realms/master\
+            url: "http://localhost:8080/auth/admin/realms/master\
               /users?realm=master"
             method: POST
             headers:
@@ -94,6 +95,7 @@
             return_content: yes
           register: endpoint_configure
           failed_when: endpoint_configure.json.data == []
+          no_log: True
       rescue:
         - name: Configure kong with keycloak
           uri:
@@ -102,10 +104,11 @@
             body_format: json
             body:
               name: oidc
-              config.client_id: kong
-              config.client_secret: "{{ client_secret.json.value }}"
-              config.discovery: "http://{{ ansible_eth1.ipv4.address }}:\
-                8180/auth/realms/master/.well-known/openid-configuration"
+              config:
+                client_id: api-gw
+                client_secret: "{{ client_secret.json.value }}"
+                discovery: "http://{{ ansible_eth1.ipv4.address }}:\
+                  8080/auth/realms/master/.well-known/openid-configuration"
             timeout: 300
             status_code: 201
             return_content: yes
@@ -115,7 +118,7 @@
   always:
     - name: Logout with KeyCloak
       uri:
-        url: "http://localhost:8180/auth/realms/master\
+        url: "http://localhost:8080/auth/realms/master\
           /protocol/openid-connect/logout"
         method: POST
         body_format: form-urlencoded

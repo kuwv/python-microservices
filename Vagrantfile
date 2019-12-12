@@ -4,11 +4,11 @@
 $base = <<-BASE
   yum update -y
   yum install epel-release -y
-  yum install git vim-enhanced jq ansible python-docker -y
+  yum install git vim-enhanced jq ansible -y
 BASE
 
 $docker = <<-DOCKER
-  yum install docker -y
+  yum install docker docker-devel python-docker -y
 
   if ! getent group docker > /dev/null 2>&1
   then
@@ -42,9 +42,9 @@ $docker = <<-DOCKER
 DOCKER
 
 $python = <<-PYTHON
-  yum install python36 python36-devel python36-setuptools -y
+  yum install gcc python36 python36-devel python36-setuptools -y
   /usr/bin/python3.6 -m ensurepip
-  /usr/local/bin/pip3.6 install pipenv
+  /usr/bin/pip3.6 install pipenv
 PYTHON
 
 Vagrant.configure("2") do |config|
@@ -53,8 +53,11 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.box = "bento/centos-7"
+  config.ssh.forward_agent = true
 
   config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
+  # Development
+  config.vm.network "forwarded_port", guest: 3000, host: 3000
   # Kong Public
   config.vm.network "forwarded_port", guest: 8000, host: 8000
   config.vm.network "forwarded_port", guest: 8443, host: 8443
@@ -62,20 +65,20 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8001, host: 8001
   config.vm.network "forwarded_port", guest: 8444, host: 8444
   # KeyCloak
-  config.vm.network "forwarded_port", guest: 8180, host: 8180
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   config.vm.provision "base", type: "shell", inline: $base
   config.vm.provision "docker", type: "shell", inline: $docker
   config.vm.provision "python", type: "shell", inline: $python
 
   config.vm.provision "setup", type: "ansible_local" do |ansible|
-    ansible.playbook = "sso/deploy.yml"
+    ansible.playbook = "deploy.yml"
     ansible.verbose = true
   end
 
   config.vm.provision "remove", type: "ansible_local", run: "never" do |ansible|
-    ansible.playbook = "sso/deploy.yml"
-    ansible.tags = 'remove'
+    ansible.playbook = "deploy.yml"
+    ansible.tags = "remove"
     ansible.extra_vars = {
       sso_purge_volumes: true
     }

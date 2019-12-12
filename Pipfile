@@ -4,10 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-docker-compose = "*"
 ansible = "*"
+docker = "*"
 
 [packages]
-# [requires]
-# python_version = "3.6"
-docker-py = "*"
+
+[requires]
+python_version = "3.6"
+
+[scripts]
+package = "python setup.py bdist_wheel"
+deploy = "ansible-playbook -i localhost, sso/deploy.yml"

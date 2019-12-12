@@ -4,6 +4,7 @@
     name: "{{ item }}"
     state: "{{ sso_network_state | d('present') }}"
   loop:
+    - api-net
     - kong-net
     - keycloak-net
   tags:
