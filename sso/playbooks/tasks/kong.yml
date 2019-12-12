@@ -1,7 +1,7 @@
 ---
 - name: Build Kong OIDC image
   docker_image:
-    name: kong:1.4.1-centos-oidc
+    name: kong:0.14.1-centos-oidc
     source: build
     build:
       pull: yes
@@ -50,14 +50,16 @@
     - name: Run Kong database migration
       docker_container:
         name: kong-migration
-        image: kong:1.4.1-centos-oidc
+        image: kong:0.14.1-centos-oidc
         networks_cli_compatible: true
         networks:
           - name: kong-net
             links:
               - kong-db
         detach: "{{ sso_debug | d(omit) }}"
-        command: kong migrations bootstrap
+        # TODO: bootstrap instead of up for newer versions
+        command: kong migrations up
+        # TODO: auto_remove requires newer docker python
         # auto_remove: true
         env:
           KONG_DATABASE: postgres
@@ -75,7 +77,7 @@
     - name: Start Kong
       docker_container:
         name: kong
-        image: kong:1.4.1-centos-oidc
+        image: kong:0.14.1-centos-oidc
         networks_cli_compatible: true
         networks:
           - name: api-net

@@ -64,6 +64,7 @@
             return_content: yes
           register: user_register
           failed_when: user_register.json == []
+          no_log: True
       rescue:
         - name: Create realm user
           uri:
@@ -94,6 +95,7 @@
             return_content: yes
           register: endpoint_configure
           failed_when: endpoint_configure.json.data == []
+          no_log: True
       rescue:
         - name: Configure kong with keycloak
           uri:

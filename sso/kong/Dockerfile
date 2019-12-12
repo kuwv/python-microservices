@@ -1,6 +1,6 @@
-FROM kong:1.4.1-centos
+FROM kong:0.14.1-centos
 
-LABEL description="Centos 7 + Kong 1.4.1-centos + kong-oidc plugin"
+LABEL description="Centos 7 + Kong 0.14.1-centos + kong-oidc plugin"
 
 ENV KONG_PLUGINS=oidc
 
@@ -15,4 +15,4 @@ RUN yum install -y git unzip ;\
   # TODO: Need to do pseudo release because current is obsolescent :(
   # && luarocks install kong-oidc
 
-USER kong
+# USER kong

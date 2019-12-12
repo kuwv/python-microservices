@@ -1,6 +1,6 @@
 .PHONY: start-sso
 start-sso:
-	ansible-playbook -i localhost, sso/deploy.yml -vvv
+	ansible-playbook -i localhost, sso/deploy.yml
 
 .PHONY: stop-sso
 stop-sso:
@@ -11,7 +11,7 @@ rebuild-sso: stop-sso start-sso
 
 .PHONY: start-webapp
 start-webapp:
-	ansible-playbook -i localhost, webapp/deploy.yml -vvv
+	ansible-playbook -i localhost, webapp/deploy.yml
 
 .PHONY: stop-webapp
 stop-webapp:

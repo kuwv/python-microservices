@@ -38,7 +38,7 @@
         service_accounts_enabled: true
         authorization_services_enabled: true
         # TODO: Disable direct access to password
-        direct_access_grants_enabled: true
+        # direct_access_grants_enabled: true
         standard_flow_enabled: true
         client_authenticator_type: client-secret
         state: present
@@ -64,6 +64,7 @@
             return_content: yes
           register: endpoint_configure
           failed_when: endpoint_configure.json.data == []
+          no_log: True
       rescue:
         - name: Configure webapp with keycloak
           uri:
