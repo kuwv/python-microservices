@@ -22,7 +22,7 @@ This project is intended as a starting point for creating microserices using Pyt
 
 Start VM with application
 ```
-vagrant up --provision-with
+vagrant up
 ```
 
 Removing application from VM
