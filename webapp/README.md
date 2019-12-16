@@ -2,6 +2,10 @@
 
 This is a prototype for using authlib and FastAPI integrating with the auth stack from section one.
 
+## Description
+
+FastAPI is a very fast asynchronous Python web framework that has support of OpenID-Connect and OAuth. Currently, this support is mostly limited to the legacy password based OAuth flow. This flow is fine when building systems that self-host auth, but become problematic when passwords must shared between the resources, SSO, and user. This section is designed to implement a reference archtecture for implemented three-legged auth using FastAPI with Authlib to protect a resource. Instead of using the password flow it is designed to utilize the much regarded authorization flow instead.
+
 ## Features
 - [x] OpenAPI integration
 - [x] Resource Protector
