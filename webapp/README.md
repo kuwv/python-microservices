@@ -13,6 +13,7 @@ This is a prototype for using authlib and FastAPI integrating with the auth stac
 - [ ] Access Audit
 - [x] Authlib JOSE
 - [ ] OpenID-Connect
+- [ ] UI (via multiprocessing)
 
 ## Manual testing
 
@@ -21,8 +22,8 @@ Setup environment
 SSO_REALM=master
 SSO_USERNAME=admin
 SSO_PASSWORD=admin
-SSO_CLIENT_ID=userId
-SSO_CLIENT_SECRET=<client_secret>
+SSO_CLIENT_ID=webapp
+SSO_CLIENT_SECRET=<retrieve from keycloak>
 ```
 
 Retrieve token using client.
