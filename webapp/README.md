@@ -1,6 +1,18 @@
 # OAuth2 Webapp example
 
-This is an example using authlib and FastAPI to integration into the auth stack in section one.
+This is a prototype for using authlib and FastAPI integrating with the auth stack from section one.
+
+## Features
+- [x] OpenAPI integration
+- [x] Resource Protector
+- [ ] Client
+- [x] Identity Propagation
+- [x] Scopes
+- [ ] RBAC
+- [x] Logging
+- [ ] Access Audit
+- [x] Authlib JOSE
+- [ ] OpenID-Connect
 
 ## Manual testing
 
