@@ -1,16 +1,16 @@
-# Microservices with Python
+# Implementing Python Microservices with OpenID-Connect/OAuth2
 
 
 ## Index
 
 * [ License ](LICENSE.md)
 1. [SSO setup - Using Ansible to deploy KeyCloak / Kong](./sso/README.md)
-2. [Webapp setup - Setup web application to auth to KeyCloak](./webapp/README.md)
+2. [Webapp setup - Setup resource web application to endpoint with KeyCloak / Kong](./webapp/README.md)
 
 
 ## Synopsis
 
-This project is intended as a starting point for creating microserices using Python.
+This project is intended as a reference archicture for implementing OIDC/OAuth2 secure microserices using Python.
 
 
 ## Description
