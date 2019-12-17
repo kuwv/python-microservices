@@ -41,7 +41,7 @@ vagrant up
 
 Removing application from VM
 ```
-vagrant up --provision-with remove
+vagrant provision --provision-with remove
 ```
 
 Login
