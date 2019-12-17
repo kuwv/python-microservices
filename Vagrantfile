@@ -87,7 +87,7 @@ Vagrant.configure("2") do |config|
   config.trigger.after :provision do |trigger|
     trigger.ignore = [:up, :destroy, :halt, :package]
     trigger.ruby do
-      system("open", "http://localhost:8000/webapp")
+      system("open", "http://localhost:8000/webapp/token")
     end
   end
 end
