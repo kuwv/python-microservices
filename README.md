@@ -46,7 +46,7 @@ vagrant up --provision-with remove
 
 Login
 ```
-vagrant ssh -- -A
+vagrant ssh
 ```
 
 ### Using pipenv
