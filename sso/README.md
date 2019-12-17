@@ -14,30 +14,34 @@ within one endpoint. Authentication and authorization can then be delegated to t
 guide provides a mock deployment demonstrating Ansible instead of docker-compose.
 
 
-## Setup
+## Manual Testing
 
-### Using pipenv for development (or siloed environment)
+## Manual testing
 
-Setup a virtual environment
+Setup environment
 ```
-pipenv shell
-```
-
-Install development dependencies
-```
-pipenv install --dev
-```
-
-Execute deployment
-```
-ansible-playbook -i localhost, deploy.yml
+SSO_REALM=master
+SSO_USERNAME=admin
+SSO_PASSWORD=admin
+SSO_CLIENT_ID=webapp
+SSO_CLIENT_SECRET=<retrieve from keycloak>
 ```
 
-Remove deployment
+Retrieve token using CLI.
 ```
-ansible-playbook -i localhost, deploy.yml --tags=remove
+export TOKEN=$(curl -s \
+-X POST "http://localhost:8080/auth/realms/${SSO_REALM}/protocol/openid-connect/token" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "username=${SSO_USERNAME}" \
+-d "password=${SSO_PASSWORD}" \
+-d 'grant_type=password' \
+-d 'client_id=admin-cli' | jq -r '.access_token')
 ```
 
+Check if the token can access the Webapp
+```
+curl -s -H "Authorization: Bearer ${TOKEN}" http://localhost:8000/mock | jq .
+```
 
 ## Refrences
 - https://www.jerney.io/secure-apis-kong-keycloak-1/
