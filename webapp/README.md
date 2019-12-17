@@ -42,17 +42,6 @@ export TOKEN=$(curl -s \
 -d 'redirect_uri=http://localhost:8000/webapp/token' | jq -r '.access_token')
 ```
 
-Retrieve token using CLI.
-```
-export TOKEN=$(curl -s \
--X POST "http://localhost:8080/auth/realms/${SSO_REALM}/protocol/openid-connect/token" \
--H "Content-Type: application/x-www-form-urlencoded" \
--d "username=${SSO_USERNAME}" \
--d "password=${SSO_PASSWORD}" \
--d 'grant_type=password' \
--d 'client_id=admin-cli' | jq -r '.access_token')
-```
-
 Check if the token can access the Webapp
 ```
 curl -s -H "Authorization: Bearer ${TOKEN}" http://localhost:8000/webapp/token | jq .
