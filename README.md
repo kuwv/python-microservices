@@ -61,6 +61,19 @@ Install development dependencies
 pipenv install --dev
 ```
 
+### Using automake
+
+Build the application
+```
+make start
+```
+
+Tear-down the application
+```
+make stop
+```
+
+*See Makefile for additional details*
 
 ## See also
 
