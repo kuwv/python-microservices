@@ -14,8 +14,6 @@ within one endpoint. Authentication and authorization can then be delegated to t
 guide provides a mock deployment demonstrating Ansible instead of docker-compose.
 
 
-## Manual Testing
-
 ## Manual testing
 
 Setup environment
