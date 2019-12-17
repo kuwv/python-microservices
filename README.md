@@ -14,7 +14,7 @@ This project is intended as a reference archicture for implementing OIDC/OAuth2 
 
 
 ## Description
-The is a reference architecture to demonstrate various IAM application setup and integration.
+This is intended to be a reference architecture to demonstrate various IAM implementations with Python. It is intended to be automated with Ansible.
 
 ## Features
 - [x] KeyCloak, Kong, and Mock endpoint
@@ -23,6 +23,12 @@ The is a reference architecture to demonstrate various IAM application setup and
 - [ ] Ansible Roles
 - [ ] UI with JS module imports
 - [ ] Proxy KeyCloak / Kong
+<!---
+- [ ] Cookiecutter
+- [ ] Task queue
+- [ ] GRPC
+- [ ] OpenShift deployment
+--->
 
 ## Setup
 
