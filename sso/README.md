@@ -23,8 +23,6 @@ Setup environment
 SSO_REALM=master
 SSO_USERNAME=admin
 SSO_PASSWORD=admin
-SSO_CLIENT_ID=webapp
-SSO_CLIENT_SECRET=<retrieve from keycloak>
 ```
 
 Retrieve token using CLI.
