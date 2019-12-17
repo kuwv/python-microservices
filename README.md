@@ -73,7 +73,10 @@ Tear-down the application
 make stop
 ```
 
-*See Makefile for additional details*
+Check help for additional commands
+```
+make help
+```
 
 ## See also
 
