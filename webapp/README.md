@@ -18,6 +18,7 @@ FastAPI is a very fast asynchronous Python web framework that has support of Ope
 - [x] Authlib JOSE
 - [ ] OpenID-Connect
 - [ ] UI (via multiprocessing)
+- [ ] tls/http2
 
 ## Manual testing
 
