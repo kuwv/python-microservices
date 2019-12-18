@@ -5,7 +5,7 @@
 
 * [ License ](LICENSE.md)
 * [SSO setup - Using Ansible to deploy KeyCloak / Kong](./sso/README.md)
-* [Webapp setup - Setup resource web application to endpoint with KeyCloak / Kong](./webapp/README.md)
+* [Webapp setup - Setup resource web application to endpoint with KeyCloak / Kong](./sso-webapp/README.md)
 
 
 ## Synopsis
