@@ -20,6 +20,10 @@ FastAPI is a modern asynchronous Python web framework that has support for OpenI
 - [ ] UI (via multiprocessing)
 - [ ] tls/http2
 
+## Access
+
+Open a web browser and navigate to http://localhost:8000/webapp/secure
+
 ## Manual testing
 
 Setup environment

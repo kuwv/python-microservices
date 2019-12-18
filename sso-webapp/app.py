@@ -9,7 +9,6 @@ from urllib.parse import urlencode
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, RedirectResponse
 from oauth.resource_protector import ResourceProtector
-import pprint
 
 # JWT
 from oauth.token import (
