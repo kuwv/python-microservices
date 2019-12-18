@@ -2,7 +2,7 @@
 
 .PHONY: help
 help:
-	@fgrep "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+	@fgrep "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/:.*## / - /'
 
 .PHONY: start-sso
 start-sso: ## Start SSO instances
@@ -17,11 +17,11 @@ rebuild-sso: stop-sso start-sso ## Rebuild SSO instances
 
 .PHONY: start-webapp 
 start-webapp: ## Start webapp instance
-	ansible-playbook -i localhost, webapp/deploy.yml
+	ansible-playbook -i localhost, sso-webapp/deploy.yml
 
 .PHONY: stop-webapp
 stop-webapp: ## Stop webapp instance
-	ansible-playbook -i localhost, webapp/deploy.yml --tags=remove -e webapp_volume_state=absent
+	ansible-playbook -i localhost, sso-webapp/deploy.yml --tags=remove -e webapp_volume_state=absent
 
 .PHONY: rebuild-webapp
 rebuild-webapp: stop-webapp start-webapp ## Rebuild webapp instance
