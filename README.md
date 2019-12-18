@@ -78,7 +78,9 @@ Check help for additional commands
 make help
 ```
 
+<!---
 ## See also
 
 - [The Twelve-Factor App](https://12factor.net/)
 - [The Reactive Manifesto](https://www.reactivemanifesto.org/)
+--->
