@@ -4,8 +4,8 @@
 ## Index
 
 * [ License ](LICENSE.md)
-1. [SSO setup - Using Ansible to deploy KeyCloak / Kong](./sso/README.md)
-2. [Webapp setup - Setup resource web application to endpoint with KeyCloak / Kong](./webapp/README.md)
+* [SSO setup - Using Ansible to deploy KeyCloak / Kong](./sso/README.md)
+* [Webapp setup - Setup resource web application to endpoint with KeyCloak / Kong](./webapp/README.md)
 
 
 ## Synopsis
@@ -78,7 +78,9 @@ Check help for additional commands
 make help
 ```
 
+<!---
 ## See also
 
 - [The Twelve-Factor App](https://12factor.net/)
 - [The Reactive Manifesto](https://www.reactivemanifesto.org/)
+--->
