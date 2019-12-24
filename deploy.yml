@@ -5,7 +5,7 @@
     - sso
 
 - name: Setup Webapp
-  import_playbook: webapp/deploy.yml
+  import_playbook: sso-webapp/deploy.yml
   tags:
     - webapp
 ...

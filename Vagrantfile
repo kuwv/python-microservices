@@ -1,6 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+
 $base = <<-BASE
   yum update -y
   yum install epel-release -y
@@ -47,38 +48,62 @@ $python = <<-PYTHON
   /usr/bin/pip3.6 install pipenv
 PYTHON
 
-Vagrant.configure("2") do |config|
-  config.vm.provider :virtualbox do |vb|
-    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+Vagrant.configure('2') do |config|
+  if Vagrant::Util::Platform.linux? then
+    interface = 'virbr0'
+  elsif Vagrant::Util::Platform.darwin? then
+    interface = 'en0: Wi-Fi (AirPort)'
   end
 
-  config.vm.box = "bento/centos-7"
+  # config.vagrant.plugins = 'vagrant-libvirt'
+  if Vagrant.has_plugin?('vagrant-libvirt')
+    config.vm.box = 'centos/7'
+
+    config.vm.define "sso-stack" do |config|
+      config.vm.hostname = "sso-stack"
+
+      config.vm.network 'public_network',
+        type: 'bridge',
+        mode: 'bridge',
+        dev: 'virbr0'
+
+      config.vm.provider "libvirt" do |lv|
+        lv.memory = 1024
+        lv.cpus = 1
+      end
+    end
+  else
+    config.vm.provider :virtualbox do |vb|
+      vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
+    end
+    config.vm.network 'public_network', bridge: $interface
+  end
+
+  # Development
+  config.vm.network 'forwarded_port', guest: 3000, host: 3000
+  # Kong Public
+  config.vm.network 'forwarded_port', guest: 8000, host: 8000
+  config.vm.network 'forwarded_port', guest: 8443, host: 8443
+  # Kong Management
+  config.vm.network 'forwarded_port', guest: 8001, host: 8001
+  config.vm.network 'forwarded_port', guest: 8444, host: 8444
+  # KeyCloak
+  config.vm.network 'forwarded_port', guest: 8080, host: 8080
+
   config.ssh.forward_agent = true
 
-  config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
-  # Development
-  config.vm.network "forwarded_port", guest: 3000, host: 3000
-  # Kong Public
-  config.vm.network "forwarded_port", guest: 8000, host: 8000
-  config.vm.network "forwarded_port", guest: 8443, host: 8443
-  # Kong Management
-  config.vm.network "forwarded_port", guest: 8001, host: 8001
-  config.vm.network "forwarded_port", guest: 8444, host: 8444
-  # KeyCloak
-  config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.provision 'base', type: 'shell', inline: $base
+  config.vm.provision 'docker', type: 'shell', inline: $docker
+  config.vm.provision 'python', type: 'shell', inline: $python
 
-  config.vm.provision "base", type: "shell", inline: $base
-  config.vm.provision "docker", type: "shell", inline: $docker
-  config.vm.provision "python", type: "shell", inline: $python
-
-  config.vm.provision "setup", type: "ansible_local" do |ansible|
-    ansible.playbook = "deploy.yml"
+  config.vm.provision 'setup', type: 'ansible_local' do |ansible|
+    ansible.playbook = 'deploy.yml'
     ansible.verbose = true
   end
 
-  config.vm.provision "remove", type: "ansible_local", run: "never" do |ansible|
-    ansible.playbook = "deploy.yml"
-    ansible.tags = "remove"
+  config.vm.provision 'remove', type: 'ansible_local', run: 'never' do |ansible|
+    ansible.playbook = 'deploy.yml'
+    ansible.tags = 'remove'
     ansible.extra_vars = {
       sso_purge_volumes: true
     }
@@ -87,7 +112,7 @@ Vagrant.configure("2") do |config|
   config.trigger.after :provision do |trigger|
     trigger.ignore = [:up, :destroy, :halt, :package]
     trigger.ruby do
-      system("open", "http://localhost:8000/webapp/token")
+      system('open', 'http://localhost:8000/webapp/token')
     end
   end
 end
