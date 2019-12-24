@@ -65,7 +65,7 @@ Vagrant.configure('2') do |config|
       config.vm.network 'public_network',
         type: 'bridge',
         mode: 'bridge',
-        dev: 'virbr0'
+        dev: "#{interface}"
 
       config.vm.provider "libvirt" do |lv|
         lv.memory = 1024
@@ -73,10 +73,11 @@ Vagrant.configure('2') do |config|
       end
     end
   else
+    config.vm.box = 'bento/centos-7'
     config.vm.provider :virtualbox do |vb|
       vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
     end
-    config.vm.network 'public_network', bridge: $interface
+    config.vm.network 'public_network', bridge: "#{interface}"
   end
 
   # Development
