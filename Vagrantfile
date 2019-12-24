@@ -44,7 +44,7 @@ DOCKER
 $python = <<-PYTHON
   yum install gcc python36 python36-devel python36-setuptools -y
   /usr/bin/python3.6 -m ensurepip
-  /usr/bin/pip3.6 install pipenv
+  sudo -u vagrant -s /usr/bin/pip3.6 install --user pipenv
 PYTHON
 
 Vagrant.configure("2") do |config|
@@ -54,6 +54,10 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = "bento/centos-7"
   config.ssh.forward_agent = true
+
+  if File.exist?("~/.gitconfig")
+    config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
+  end
 
   config.vm.network "public_network", bridge: 'en0: Wi-Fi (AirPort)'
   # Development
