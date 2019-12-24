@@ -55,13 +55,11 @@ Vagrant.configure('2') do |config|
     interface = 'en0: Wi-Fi (AirPort)'
   end
 
+  config.vm.hostname = "sso-stack"
   # config.vagrant.plugins = 'vagrant-libvirt'
   if Vagrant.has_plugin?('vagrant-libvirt')
     config.vm.box = 'centos/7'
-
     config.vm.define "sso-stack" do |config|
-      config.vm.hostname = "sso-stack"
-
       config.vm.network 'public_network',
         type: 'bridge',
         mode: 'bridge',
@@ -71,6 +69,8 @@ Vagrant.configure('2') do |config|
         lv.memory = 1024
         lv.cpus = 1
       end
+
+      config.vm.synced_folder './', '/vagrant', type: 'rsync'
     end
   else
     config.vm.box = 'bento/centos-7'
