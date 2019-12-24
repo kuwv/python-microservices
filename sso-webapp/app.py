@@ -9,7 +9,6 @@ from urllib.parse import urlencode
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, RedirectResponse
 from oauth.resource_protector import ResourceProtector
-import pprint
 
 # JWT
 from oauth.token import (
@@ -41,20 +40,17 @@ auth.register_token_validator(
     )
 )
 
-
-app = FastAPI()
-
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: bool = None
+app = FastAPI(
+    openapi_prefix=config.oapi_prefix,
+    swagger_ui_oauth2_redirect_url=config.oapi_redirect_url
+)
 
 @app.get("/secure", dependencies=[Depends(auth)])
 async def secure() -> bool:
     return True
 
-@app.get("/not_secure")
-async def not_secure() -> bool:
+@app.get("/insecure")
+async def insecure() -> bool:
     return True
 
 @app.get("/token", response_model=JWTAuthorizationCredentials)
@@ -64,15 +60,3 @@ async def get_credentials(
     if token is None:
         return {"msg": "No token found"}
     return token
-
-@app.get("/items", dependencies=[Depends(auth)])
-async def read_items():
-    return True
-
-@app.get("/items/{item_id}", dependencies=[Depends(auth)])
-async def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
-
-@app.put("/items/{item_id}", dependencies=[Depends(auth)])
-async def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}

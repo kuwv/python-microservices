@@ -15,7 +15,6 @@ from authlib.jose import jwt
 
 from authlib.oauth2.rfc6750 import BearerTokenValidator
 from .logging import AuthAudit
-from pprint import pprint
 
 
 # https://tools.ietf.org/html/rfc7517#page-5

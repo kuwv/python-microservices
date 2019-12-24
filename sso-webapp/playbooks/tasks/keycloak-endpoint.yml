@@ -21,6 +21,26 @@
       set_fact:
         token: "{{ sso_auth.json.access_token }}"
 
+    - name: Create KeyCloak test client
+      keycloak_client:
+        auth_client_id: admin-cli
+        auth_keycloak_url: http://localhost:8080/auth
+        auth_realm: master
+        auth_username: admin
+        auth_password: admin
+        client_id: webapp-oapi
+        protocol: openid-connect
+        public_client: false
+        root_url: http://localhost:3000
+        redirect_uris:
+          - http://localhost:3000/*
+          - http://localhost:3000/docs/*
+        standard_flow_enabled: true
+        service_accounts_enabled: true
+        authorization_services_enabled: true
+        client_authenticator_type: client-secret
+        state: present
+
     - name: Create KeyCloak client
       keycloak_client:
         auth_client_id: admin-cli
@@ -35,11 +55,9 @@
         root_url: http://localhost:8000/webapp
         redirect_uris:
           - http://localhost:8000/webapp/*
+        standard_flow_enabled: true
         service_accounts_enabled: true
         authorization_services_enabled: true
-        # TODO: Disable direct access to password
-        # direct_access_grants_enabled: true
-        standard_flow_enabled: true
         client_authenticator_type: client-secret
         state: present
       register: client_register
