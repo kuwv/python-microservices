@@ -1,8 +1,10 @@
 from typing import List, Optional
+from fastapi import HTTPException
 from fastapi.security.utils import get_authorization_scheme_param
 from fastapi.security.oauth2 import OAuth2
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from starlette.requests import Request
+from starlette.status import HTTP_401_UNAUTHORIZED
 
 
 class OAuth2AuthorizationCodeBearer(OAuth2):

@@ -8,10 +8,10 @@ from pydantic import BaseModel
 from urllib.parse import urlencode
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, RedirectResponse
-from oauth.resource_protector import ResourceProtector
+from security.resource_protector import ResourceProtector
 
 # JWT
-from oauth.token import (
+from security.token import (
     JWK, JWKS, JWTBearerTokenValidator, JWTAuthorizationCredentials
 )
 
