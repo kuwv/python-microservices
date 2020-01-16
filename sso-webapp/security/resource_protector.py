@@ -4,13 +4,14 @@ from contextlib import contextmanager
 from typing import Any, Dict, Optional, List
 from starlette.requests import Request
 from fastapi.security import SecurityScopes
+from fastapi.security import OAuth2AuthorizationCodeBearer
 from authlib.oauth2 import ResourceProtector as _ResourceProtector
 from authlib.oauth2.rfc6749 import MissingAuthorizationError
-from .models import OAuth2AuthorizationCodeBearer
 from .logging import AuthAudit, logger
 import base64
 
 
+# TODO: Revert to pure OpenAPI implementation with PyJWT?!?
 class ResourceProtector(_ResourceProtector, OAuth2AuthorizationCodeBearer):
     """A protecting method for resource servers. Creating a ``require_oauth``
     decorator easily with ResourceProtector

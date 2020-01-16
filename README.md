@@ -22,6 +22,7 @@ This is intended to be a reference architecture to demonstrate various IAM imple
 - [x] Ansible playbooks
 - [ ] Ansible Roles
 - [ ] UI with JS module imports
+- [ ] PKCE UI
 - [ ] Proxy KeyCloak / Kong
 <!---
 - [ ] Cookiecutter

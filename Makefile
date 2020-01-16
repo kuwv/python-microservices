@@ -2,7 +2,11 @@
 
 .PHONY: help
 help:
+	@echo
+	@echo Implementing Python Microservices with OpenID-Connect/OAuth2
+	@echo
 	@fgrep "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/:.*## / - /'
+	@echo
 
 .PHONY: start-sso
 start-sso: ## Start SSO instances
