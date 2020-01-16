@@ -3,14 +3,14 @@ from typing import Optional
 from fastapi import FastAPI, Security
 
 from .contexts import security
-from security.models import OAuth2AuthorizationCodeBearer
+from fastapi.security.oauth2 import OAuth2AuthorizationCodeBearer
 
 from starlette.testclient import TestClient
 
 app = FastAPI()
 
 oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    authorization_url="/authorize", token_url="/token", auto_error=True
+    authorizationUrl="/authorize", tokenUrl="/token", auto_error=True
 )
 
 
@@ -65,13 +65,13 @@ def test_openapi_schema():
 def test_no_token():
     response = client.get("/items")
     assert response.status_code == 401
-    assert response.json() == {"detail": "Unauthorized"}
+    assert response.json() == {"detail": "Not authenticated"}
 
 
 def test_incorrect_token():
     response = client.get("/items", headers={"Authorization": "Non-existent testtoken"})
     assert response.status_code == 401
-    assert response.json() == {"detail": "Unauthorized"}
+    assert response.json() == {"detail": "Not authenticated"}
 
 
 def test_token():

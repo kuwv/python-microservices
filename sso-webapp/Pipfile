@@ -8,6 +8,7 @@ hypercorn = {extras = ["uvloop"],version = "*"}
 uvicorn = "*"
 flit = "*"
 black = "*"
+pytest = "*"
 
 [packages]
 pbr = "*"

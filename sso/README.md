@@ -39,5 +39,8 @@ Check if the token can access the Webapp
 curl -s -H "Authorization: Bearer ${TOKEN}" http://localhost:8000/mock | jq .
 ```
 
+## TODO
+Implement https://github.com/Optum/kong-oidc-auth
+
 ## Refrences
 - https://www.jerney.io/secure-apis-kong-keycloak-1/
