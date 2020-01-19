@@ -1,7 +1,7 @@
 ---
 - name: Build webapp image
   docker_image:
-    name: hijynx/webapp:v1.1
+    name: hijynx/webapp:v2.1
     source: build
     build:
       pull: yes
