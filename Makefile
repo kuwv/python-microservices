@@ -21,6 +21,7 @@ rebuild-sso: stop-sso start-sso ## Rebuild SSO instances
 
 .PHONY: start-webapp 
 start-webapp: ## Start webapp instance
+	pushd sso-webapp && pipenv lock -r > requirements.txt && popd
 	ansible-playbook -i localhost, sso-webapp/deploy.yml
 
 .PHONY: stop-webapp
