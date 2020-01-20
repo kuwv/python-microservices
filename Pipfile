@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 ansible = "*"
 docker = "*"
+bump2version = "*"
 
 [packages]
 
