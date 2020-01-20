@@ -1,5 +1,6 @@
 -i https://pypi.org/simple
 aiocontextvars==0.2.2 ; python_version < '3.7'
+aiofiles==0.4.0
 asgiref==3.2.3
 attrs==19.3.0
 authlib==0.13
