@@ -49,7 +49,7 @@
       retries: 10
   when: not webapp_db_state.exists
 
-- name: Check if WebApp DB is running
+- name: Check if WebApp is running
   docker_container_info:
     name: webapp
   register: webapp_state
@@ -58,7 +58,7 @@
     - name: Start WebApp
       docker_container:
         name: webapp
-        image: hijynx/webapp:v1.1
+        image: hijynx/webapp:v2.1
         networks_cli_compatible: true
         networks:
           - name: api-net
