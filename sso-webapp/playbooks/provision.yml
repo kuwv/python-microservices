@@ -4,7 +4,7 @@
   connection: local
 
   vars:
-    2.1.2
+    webapp_version: 2.1.2
 
   tasks:
     - name: Execute resource setup tasks
