@@ -2,13 +2,13 @@
 # vi: set ft=ruby :
 
 
-$base = <<-BASE
+$base = <<~BASE
   yum update -y
   yum install epel-release -y
   yum install git vim-enhanced jq ansible -y
 BASE
 
-$docker = <<-DOCKER
+$docker = <<~DOCKER
   yum install docker docker-devel python-docker -y
 
   if ! getent group docker > /dev/null 2>&1
@@ -42,11 +42,22 @@ $docker = <<-DOCKER
   fi
 DOCKER
 
-$python = <<-PYTHON
+$python = <<~PYTHON
   yum install gcc python36 python36-devel python36-setuptools -y
   /usr/bin/python3.6 -m ensurepip
   sudo -u vagrant -s /usr/bin/pip3.6 install --user pipenv
 PYTHON
+
+$npm = %Q(
+  yum install centos-release-scl-rh -y
+  yum install rh-nodejs10 -y
+  cat > /etc/profile.d/npm.sh <<-NPM
+	#!/bin/bash
+	source /opt/rh/rh-nodejs10/enable
+	export X_SCLS="`scl enable rh-nodejs10 'echo $X_SCLS'`"
+	NPM
+  scl enable rh-nodejs10 'npm install @vue/cli @vue/cli-service-global -g'
+)
 
 Vagrant.configure('2') do |config|
   if Vagrant::Util::Platform.linux? then
@@ -93,13 +104,14 @@ Vagrant.configure('2') do |config|
 
   config.ssh.forward_agent = true
 
-  if File.exist?("~/.gitconfig")
-    config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
-  end
+  # if File.exist?("~/.gitconfig")
+  config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
+  # end
 
   config.vm.provision 'base', type: 'shell', inline: $base
   config.vm.provision 'docker', type: 'shell', inline: $docker
   config.vm.provision 'python', type: 'shell', inline: $python
+  config.vm.provision 'npm', type: 'shell', inline: $npm
 
   config.vm.provision 'setup', type: 'ansible_local' do |ansible|
     ansible.playbook = 'deploy.yml'
