@@ -3,6 +3,9 @@
   become: true
   connection: local
 
+  vars:
+    webapp_version: 2.1.2
+
   tasks:
     - name: Execute resource setup tasks
       import_tasks: tasks/resources.yml
