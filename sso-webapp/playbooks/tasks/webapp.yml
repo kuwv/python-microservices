@@ -1,7 +1,7 @@
 ---
 - name: Build webapp image
   docker_image:
-    name: hijynx/webapp:v2.1
+    name: "hijynx/webapp:v{{ webapp_version }}"
     source: build
     build:
       pull: yes
@@ -58,7 +58,7 @@
     - name: Start WebApp
       docker_container:
         name: webapp
-        image: hijynx/webapp:v2.1
+        image: "hijynx/webapp:v{{ webapp_version }}"
         networks_cli_compatible: true
         networks:
           - name: api-net
