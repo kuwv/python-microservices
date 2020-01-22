@@ -9,7 +9,7 @@ from urllib.parse import urlencode
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, RedirectResponse
 from security.resource_protector import ResourceProtector
-from starlette.staticfiles import StaticFiles
+# from starlette.staticfiles import StaticFiles
 
 # JWT
 from security.token import (
@@ -58,4 +58,4 @@ async def get_credentials(
         return {"msg": "No token found"}
     return token
 
-app.mount("/", StaticFiles(directory="static/dist"), name="static")
+# app.mount("/static", StaticFiles(directory="static/dist"), name="static")
