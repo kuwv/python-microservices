@@ -37,5 +37,9 @@ start: start-sso start-webapp ## Start all stack components
 .PHONY: stop
 stop: stop-webapp stop-sso ## Stop all stack components
 
+.PHONY: clean
+clean: stop ## Stop and Clean environment
+	rm -rf sso-webapp/static/{dist,node_modules}
+
 .PHONY: rebuild
-rebuild: stop start ## Rebuild all stack components
+rebuild: clean start ## Rebuild all stack components

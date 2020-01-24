@@ -2,14 +2,25 @@
 # vi: set ft=ruby :
 
 
-$base = <<-BASE
+$base = <<~BASE
   yum update -y
   yum install epel-release -y
   yum install git vim-enhanced jq ansible -y
 BASE
 
-$docker = <<-DOCKER
-  yum install docker docker-devel python-docker -y
+$docker = %Q(
+  yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  yum install yum-utils device-mapper-persistent-data lvm2 -y
+  yum install docker-ce python-docker -y
+
+  sudo sed -i "s|-H\s*fd://\s*||g" /usr/lib/systemd/system/docker.service
+  systemctl daemon-reload
+
+  cat > /etc/docker/daemon.json <<-DAEMON
+	{
+	  "hosts": ["unix:///var/run/docker.sock", "tcp://127.0.0.1:2375"]
+	}
+	DAEMON
 
   if ! getent group docker > /dev/null 2>&1
   then
@@ -21,16 +32,6 @@ $docker = <<-DOCKER
     usermod -aG docker vagrant
   fi
 
-  if ! grep OPTIONS /etc/sysconfig/docker | grep -q tcp://.*:2375
-  then
-    sed -i "s|OPTIONS='|OPTIONS='-H tcp://127.0.0.1:2375 |g" /etc/sysconfig/docker
-  fi
-
-  if ! grep OPTIONS /etc/sysconfig/docker | grep -q unix://.*/docker.sock
-  then
-    sed -i "s|OPTIONS='|OPTIONS='-H unix://var/run/docker.sock |g" /etc/sysconfig/docker
-  fi
-
   if ! systemctl is-enabled docker.service >/dev/null 2>&1
   then
     systemctl enable docker
@@ -40,13 +41,24 @@ $docker = <<-DOCKER
   then
     systemctl start docker
   fi
-DOCKER
+)
 
-$python = <<-PYTHON
+$python = <<~PYTHON
   yum install gcc python36 python36-devel python36-setuptools -y
   /usr/bin/python3.6 -m ensurepip
   sudo -u vagrant -s /usr/bin/pip3.6 install --user pipenv
 PYTHON
+
+$npm = %Q(
+  yum install centos-release-scl-rh -y
+  yum install rh-nodejs10 -y
+  cat > /etc/profile.d/npm.sh <<-NPM
+	#!/bin/bash
+	source /opt/rh/rh-nodejs10/enable
+	export X_SCLS="`scl enable rh-nodejs10 'echo $X_SCLS'`"
+	NPM
+  scl enable rh-nodejs10 'npm install @vue/cli @vue/cli-service-global -g'
+)
 
 Vagrant.configure('2') do |config|
   if Vagrant::Util::Platform.linux? then
@@ -55,13 +67,11 @@ Vagrant.configure('2') do |config|
     interface = 'en0: Wi-Fi (AirPort)'
   end
 
+  config.vm.hostname = "sso-stack"
   # config.vagrant.plugins = 'vagrant-libvirt'
   if Vagrant.has_plugin?('vagrant-libvirt')
     config.vm.box = 'centos/7'
-
     config.vm.define "sso-stack" do |config|
-      config.vm.hostname = "sso-stack"
-
       config.vm.network 'public_network',
         type: 'bridge',
         mode: 'bridge',
@@ -71,6 +81,8 @@ Vagrant.configure('2') do |config|
         lv.memory = 1024
         lv.cpus = 1
       end
+
+      config.vm.synced_folder './', '/vagrant', type: 'rsync'
     end
   else
     config.vm.box = 'bento/centos-7'
@@ -93,13 +105,14 @@ Vagrant.configure('2') do |config|
 
   config.ssh.forward_agent = true
 
-  if File.exist?("~/.gitconfig")
-    config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
-  end
+  # if File.exist?("~/.gitconfig")
+  config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
+  # end
 
   config.vm.provision 'base', type: 'shell', inline: $base
   config.vm.provision 'docker', type: 'shell', inline: $docker
   config.vm.provision 'python', type: 'shell', inline: $python
+  config.vm.provision 'npm', type: 'shell', inline: $npm
 
   config.vm.provision 'setup', type: 'ansible_local' do |ansible|
     ansible.playbook = 'deploy.yml'

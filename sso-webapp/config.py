@@ -51,19 +51,3 @@ svc_introspect_url: str = os.getenv(
 # authlib configuration
 realm: str = auth_realm
 headers: List[Dict] = [{'email_verified': True}]
-
-# PyJWT configuration
-audience: str = [f'{auth_realm}-realm', 'account']
-issuer: str = os.getenv('WEBAPP_AUTH_ISSUER', None)
-leeway: int = os.getenv('WEBAPP_AUTH_LEEWAY', 0)
-options: Dict = {
-    'verify_aud': os.getenv('WEBAPP_VERIFY_AUD', False),
-    'verify_exp': os.getenv('WEBAPP_VERIFY_EXP', True),
-    'verify_iat': os.getenv('WEBAPP_VERIFY_IAT', True),
-    'verify_iss': os.getenv('WEBAPP_VERIFY_ISS', True),
-    'verify_nbf': os.getenv('WEBAPP_VERIFY_NBF', True),
-    'verify_signature': os.getenv('WEBAPP_VERIFY_SIGNATURE', True),
-    'require_exp': os.getenv('WEBAPP_REQUIRE_EXP', True),
-    'require_iat': os.getenv('WEBAPP_REQUIRE_IAT', True),
-    'require_nbf': os.getenv('WEBAPP_REQUIRE_NFS', True)
-}

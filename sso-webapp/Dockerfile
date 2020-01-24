@@ -1,9 +1,19 @@
+FROM node:12-alpine
+
+WORKDIR /app/static
+COPY ./static /app
+
+RUN npm clean-install ;\ 
+   npm run build ;\ 
+   npm prune --production
+
 FROM python:3.7-alpine
 
 RUN adduser -D -h /app webapp
 
 WORKDIR /app
 COPY . /app
+COPY --from=0 /app/static static
 
 RUN apk update --no-cache ;\
   apk upgrade --no-cache ;\

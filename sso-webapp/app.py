@@ -9,6 +9,7 @@ from urllib.parse import urlencode
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, RedirectResponse
 from security.resource_protector import ResourceProtector
+from starlette.staticfiles import StaticFiles
 
 # JWT
 from security.token import (
@@ -22,7 +23,6 @@ auth = ResourceProtector(
     authorization_url=config.authorization_url,
     token_url=config.token_url,
     refresh_url=None,
-    scopes={"profile": "User information"},
     auto_error=False,
 )
 # TODO: check if URL exists
@@ -32,11 +32,7 @@ auth.register_token_validator(
         jwks,
         # TODO: Should minimal scopes be handled here too
         headers=config.headers,
-        realm=config.realm,
-        audience=config.audience,
-        issuer=config.issuer,
-        leeway=config.leeway,
-        options=config.options
+        realm=config.realm
     )
 )
 
@@ -60,3 +56,5 @@ async def get_credentials(
     if token is None:
         return {"msg": "No token found"}
     return token
+
+app.mount("/static", StaticFiles(directory="static/dist"), name="static")
