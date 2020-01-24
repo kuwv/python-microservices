@@ -20,3 +20,8 @@ env/
 # Ansible
 playbooks/
 deploy.yml
+
+# Vue
+static/dist/
+static/node_modules/
+static/README.md
