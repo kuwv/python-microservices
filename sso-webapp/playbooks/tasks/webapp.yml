@@ -80,7 +80,7 @@
           WEBAPP_USER: admin
           WEBAPP_PASSWORD: admin
           WEBAPP_SVC_AUTH_HOST: keycloak
-          WEBAPP_OAPI_PREFIX: /webapp
+          WEBAPP_URI_PREFIX: /webapp
       register: webapp_register
 
     - name: Wait for WebApp to accept connections

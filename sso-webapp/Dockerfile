@@ -1,11 +1,16 @@
-FROM node:12-alpine
+FROM node:lts-alpine AS build
 
-WORKDIR /app/static
+WORKDIR /app
+
+COPY ./static/package*.json /app/
+
+RUN apk add --no-cache --virtual .build-deps python3 ;\
+  npm install @vue/cli @vue/cli-service-global -g ;\
+  npm install
+
 COPY ./static /app
 
-RUN npm clean-install ;\ 
-   npm run build ;\ 
-   npm prune --production
+RUN npm run build
 
 FROM python:3.7-alpine
 
@@ -13,7 +18,8 @@ RUN adduser -D -h /app webapp
 
 WORKDIR /app
 COPY . /app
-COPY --from=0 /app/static static
+# RUN rm -rf /app/static
+COPY --from=build /app/dist /app/static/dist
 
 RUN apk update --no-cache ;\
   apk upgrade --no-cache ;\

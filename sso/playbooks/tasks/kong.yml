@@ -28,6 +28,7 @@
           POSTGRES_DB: api-gw
           POSTGRES_USER: kong
           # POSTGRES_PASSWORD:
+        pull: true
         state: started
       register: kong_db_register
 
