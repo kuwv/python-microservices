@@ -2,10 +2,11 @@ import os
 from pydantic import BaseModel
 from typing import Any, Dict, Optional, List
 
+# from . import name, description
 
-title: tuple = "WebApp"
-description: str = "This is a web application"
-version: str = "2.5.0"
+title: tuple = "webapp"
+description: str = "description"
+version: str = "__version__"
 
 uri_prefix: str = os.getenv('WEBAPP_URI_PREFIX', '')
 

@@ -11,6 +11,7 @@ from starlette.responses import PlainTextResponse, RedirectResponse
 from security.resource_protector import ResourceProtector
 from starlette.staticfiles import StaticFiles
 
+
 # JWT
 from security.token import (
     JWK, JWKS, JWTBearerTokenValidator, JWTAuthorizationCredentials
