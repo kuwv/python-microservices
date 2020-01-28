@@ -1,3 +1,5 @@
 module.exports = {
-  publicPath: ''
+  publicPath: process.env.WEBAPP_URI_STATIC !== 'undefined'
+    ? process.env.WEBAPP_URI_STATIC
+    : ''
 }
