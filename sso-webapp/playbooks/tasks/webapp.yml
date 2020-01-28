@@ -6,7 +6,7 @@
     build:
       pull: yes
       path: ../
-      nocache: yes
+      nocache: no
     force_source: yes
 
 - name: Check if WebApp DB is running

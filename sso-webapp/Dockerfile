@@ -18,7 +18,7 @@ RUN adduser -D -h /app webapp
 
 WORKDIR /app
 COPY . /app
-# RUN rm -rf /app/static
+RUN rm -rf /app/static
 COPY --from=build /app/dist /app/static/dist
 
 RUN apk update --no-cache ;\
