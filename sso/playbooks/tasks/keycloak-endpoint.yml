@@ -11,7 +11,7 @@
           username: admin
           password: admin
           grant_type: password
-        return_content: yes
+        return_content: true
       until: sso_auth.status != -1
       retries: 10
       delay: 1
@@ -51,7 +51,7 @@
           /{{ cid }}/client-secret"
         headers:
           Authorization: "bearer {{ token }}"
-        return_content: yes
+        return_content: true
       register: client_secret
 
     - block:
@@ -61,10 +61,10 @@
               /users?username=johnson"
             headers:
               Authorization: "bearer {{ token }}"
-            return_content: yes
+            return_content: true
           register: user_register
           failed_when: user_register.json == []
-          no_log: True
+          no_log: true
       rescue:
         - name: Create realm user
           uri:
@@ -84,7 +84,7 @@
                 - type: password
                   value: password
             status_code: 201
-            return_content: yes
+            return_content: true
           changed_when: true
           register: user_register
 
@@ -92,10 +92,10 @@
         - name: Check if kong is registered with keycloak
           uri:
             url: http://localhost:8001/plugins?name=oidc
-            return_content: yes
+            return_content: true
           register: endpoint_configure
           failed_when: endpoint_configure.json.data == []
-          no_log: True
+          no_log: true
       rescue:
         - name: Configure kong with keycloak
           uri:
@@ -111,7 +111,7 @@
                   8080/auth/realms/master/.well-known/openid-configuration"
             timeout: 300
             status_code: 201
-            return_content: yes
+            return_content: true
           changed_when: true
           register: endpoint_configure
 

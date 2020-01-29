@@ -1,13 +1,10 @@
 import logging
-import traceback
+# import traceback
 from functools import wraps
 from fastapi import HTTPException
-from starlette.status import (
-    HTTP_401_UNAUTHORIZED,
-    HTTP_403_FORBIDDEN
-)
+from starlette.status import HTTP_401_UNAUTHORIZED
 from authlib.oauth2 import OAuth2Error
-from authlib.oauth2.rfc6749 import(
+from authlib.oauth2.rfc6749 import (
     InsecureTransportError,
     InvalidRequestError,
     InvalidClientError,
@@ -21,9 +18,8 @@ from authlib.oauth2.rfc6749 import(
     MissingCodeException,
     MissingTokenException,
     MissingTokenTypeException,
-    MismatchingStateException,
+    MismatchingStateException
 )
-from starlette.requests import Request
 
 logger = logging.getLogger('auth')
 logger.setLevel(logging.DEBUG)
@@ -31,27 +27,30 @@ logger.setLevel(logging.DEBUG)
 fh = logging.FileHandler("/tmp/test.log")
 fh.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 fh.setFormatter(formatter)
 
 logger.addHandler(fh)
 
 
-def audit():
-    def audit_wrapper(fn):
-        @wraps(fn)
-        async def wrapper(*args, **kwargs):
-            try:
-                return await fn(*args, **kwargs)
-            except ExpiredSignatureError:
-                return await HTTPException(
-                    status_code=HTTP_401_UNAUTHORIZED,
-                    detail=f"{detail}",
-                    headers={'WWW-Authenticate': 'Bearer'}
-                )
-        return wrapper
-    return audit_wrapper
+# def audit():
+#     def audit_wrapper(fn):
+#         @wraps(fn)
+#         async def wrapper(*args, **kwargs):
+#             try:
+#                 return await fn(*args, **kwargs)
+#             except ExpiredSignatureError:
+#                 return await HTTPException(
+#                     status_code=HTTP_401_UNAUTHORIZED,
+#                     detail=f"{detail}",
+#                     headers={'WWW-Authenticate': 'Bearer'}
+#                 )
+#         return wrapper
+#     return audit_wrapper
+
 
 class HTTPAuditMixin(object):
     def _http_exception(self, detail):
@@ -61,6 +60,7 @@ class HTTPAuditMixin(object):
             detail=detail,
             headers={'WWW-Authenticate': 'Bearer'}
         )
+
 
 class AuthAudit(HTTPAuditMixin):
     def __init__(self):
@@ -72,7 +72,9 @@ class AuthAudit(HTTPAuditMixin):
         async def wrapper(*args, **kwargs):
             try:
                 token = await fn(*args, **kwargs)
-                self.logger.info(f"{token.claims['preferred_username']} accessed ")
+                self.logger.info(
+                    f"{token.claims['preferred_username']} accessed "
+                )
                 return token
             except InsecureTransportError:
                 raise self._http_exception(

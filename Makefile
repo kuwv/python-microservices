@@ -8,6 +8,17 @@ help:
 	@fgrep "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/:.*## / - /'
 	@echo
 
+.PHONY: lint-yaml
+lint-yaml: ## Perform YAML lint
+	yamllint .
+
+.PHONY: lint-ansible
+lint-ansible: ## Perform Ansible lint
+	ansible-lint **/*.yml
+
+.PHONY: lint
+lint: lint-ansible lint-yaml ## Peform lint
+
 .PHONY: start-sso
 start-sso: ## Start SSO instances
 	ansible-playbook -i localhost, sso/deploy.yml

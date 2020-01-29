@@ -4,10 +4,10 @@
     name: "hijynx/webapp:v{{ webapp_version }}"
     source: build
     build:
-      pull: yes
+      pull: true
       path: ../
-      nocache: no
-    force_source: yes
+      nocache: false
+    force_source: true
 
 - name: Check if WebApp DB is running
   docker_container_info:

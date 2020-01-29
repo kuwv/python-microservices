@@ -9,6 +9,7 @@ uvicorn = "*"
 flit = "*"
 black = "*"
 pytest = "*"
+flake8 = "*"
 
 [packages]
 pbr = "*"
@@ -26,20 +27,21 @@ aiofiles = "*"
 
 [scripts]
 requirements = "bash -c 'pipenv lock -r > requirements.txt'"
-build = "bash -c 'pushd static && npm install && npm run build && popd'"
+lint = "flake8 ."
+npm-build = "bash -c 'pushd static && npm install && npm run build && popd'"
 
 # hypercorn
-hypercorn = "bash -c 'hypercorn -b 0.0.0.0:3000 app:app --reload'"
-build-hypercorn = "bash -c 'pipenv run build && pipenv run hypercorn'"
+hypercorn = "hypercorn -b 0.0.0.0:3000 app:app --reload"
+build-hypercorn = "bash -c 'pipenv run npm-build && pipenv run hypercorn'"
 kill-hypercorn = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
 
 # daphine
-daphne = "bash -c 'daphne -b 0.0.0.0 -p 3000 app:app'"
+daphne = "daphne -b 0.0.0.0 -p 3000 app:app"
 build-daphne = "bash -c 'pipenv run build && pipenv run daphne'"
 kill-daphne = "bash -c 'kill -9 $(pgrep -f daphne)'"
 
 # uvicorn
-uvicorn = "bash -c 'uvicorn --host 0.0.0.0 --port 3000 app:app --reload'"
+uvicorn = "uvicorn --host 0.0.0.0 --port 3000 app:app --reload"
 build-uvicorn = "bash -c 'pipenv run build && pipenv run uvicorn'"
 kill-uvicorn = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
 
