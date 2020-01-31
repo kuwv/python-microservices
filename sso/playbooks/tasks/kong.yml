@@ -1,9 +1,10 @@
 ---
 - name: Build Kong OIDC image
   docker_image:
-    name: kong:0.14.1-centos-oidc
+    name: kong:1.5.0-centos-oidc
     source: build
     build:
+      dockerfile: Dockerfile.koa
       pull: yes
       path: ../kong
 

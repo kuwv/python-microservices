@@ -103,12 +103,12 @@
             method: POST
             body_format: json
             body:
-              name: oidc
+              name: kong-oidc-auth
               config:
                 client_id: api-gw
                 client_secret: "{{ client_secret.json.value }}"
-                discovery: "http://{{ ansible_eth1.ipv4.address }}:\
-                  8080/auth/realms/master/.well-known/openid-configuration"
+                authorize_url: "http://{{ ansible_eth1.ipv4.address }}:8080\
+                  /auth/realms/master/.well-known/openid-configuration"
             timeout: 300
             status_code: 201
             return_content: yes

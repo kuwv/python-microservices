@@ -21,7 +21,7 @@ This is intended to be a reference architecture to demonstrate various IAM imple
 - [x] Resource endpoint
 - [x] Ansible playbooks
 - [ ] Ansible Roles
-- [ ] UI with JS module imports
+- [ ] Micro-frontend UI
 - [ ] PKCE UI
 - [ ] Proxy KeyCloak / Kong
 <!---
