@@ -5,6 +5,7 @@
 $base = <<~BASE
   yum update -y
   yum install epel-release -y
+  yum install gcc kernel-devel kernel-headers dkms make bzip2 perl -y
   yum install git vim-enhanced jq ansible -y
 BASE
 
