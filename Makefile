@@ -10,11 +10,11 @@ help:
 
 .PHONY: start-sso
 start-sso: ## Start SSO instances
-	ansible-playbook -i localhost, sso/deploy.yml
+	ansible-playbook -i localhost, sso/deploy.yml -vvv
 
 .PHONY: stop-sso
 stop-sso: ## Stop SSO instances
-	ansible-playbook -i localhost, sso/deploy.yml --tags=remove -e sso_volume_state=absent
+	ansible-playbook -i localhost, sso/deploy.yml --tags=remove -e sso_volume_state=absent -vvv
 
 .PHONY: rebuild-sso
 rebuild-sso: stop-sso start-sso ## Rebuild SSO instances
@@ -22,11 +22,11 @@ rebuild-sso: stop-sso start-sso ## Rebuild SSO instances
 .PHONY: start-webapp 
 start-webapp: ## Start webapp instance
 	pushd sso-webapp && pipenv lock -r > requirements.txt && popd
-	ansible-playbook -i localhost, sso-webapp/deploy.yml
+	ansible-playbook -i localhost, sso-webapp/deploy.yml -vvv
 
 .PHONY: stop-webapp
 stop-webapp: ## Stop webapp instance
-	ansible-playbook -i localhost, sso-webapp/deploy.yml --tags=remove -e webapp_volume_state=absent
+	ansible-playbook -i localhost, sso-webapp/deploy.yml --tags=remove -e webapp_volume_state=absent -vvv
 
 .PHONY: rebuild-webapp
 rebuild-webapp: stop-webapp start-webapp ## Rebuild webapp instance

@@ -4,7 +4,7 @@
     name: kong:1.5.0-centos-oidc
     source: build
     build:
-      dockerfile: Dockerfile.koa
+      dockerfile: Dockerfile.optum
       pull: yes
       path: ../kong
 
@@ -52,7 +52,7 @@
     - name: Run Kong database migration
       docker_container:
         name: kong-migration
-        image: kong:0.14.1-centos-oidc
+        image: kong:1.5.0-centos-oidc
         networks_cli_compatible: true
         networks:
           - name: kong-net
@@ -60,7 +60,8 @@
               - kong-db
         detach: "{{ sso_debug | d(omit) }}"
         # TODO: bootstrap instead of up for newer versions
-        command: kong migrations up
+        # command: kong migrations up
+        command: kong migrations bootstrap
         # TODO: auto_remove requires newer docker python
         # auto_remove: true
         env:
@@ -79,7 +80,7 @@
     - name: Start Kong
       docker_container:
         name: kong
-        image: kong:0.14.1-centos-oidc
+        image: kong:1.5.0-centos-oidc
         networks_cli_compatible: true
         networks:
           - name: api-net
@@ -90,10 +91,10 @@
             links:
               - kong-db
         ports:
-          - '8000:8000' # Listener
-          - '8001:8001' # Admin API
-          - '8443:8443' # Listener  (SSL)
-          - '8444:8444' # Admin API (SSL)
+          - '8000:8000'  # Listener
+          - '8001:8001'  # Admin API
+          - '8443:8443'  # Listener (SSL)
+          - '8444:8444'  # Admin API (SSL)
         env:
           KONG_DATABASE: postgres
           KONG_PG_HOST: kong-db
@@ -105,7 +106,7 @@
           KONG_ADMIN_ERROR_LOG: /dev/stderr
           KONG_PROXY_LISTEN: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
           KONG_ADMIN_LISTEN: '0.0.0.0:8001, 0.0.0.0:8444 ssl http2'
-          KONG_PLUGINS: oidc
+          KONG_PLUGINS: kong-oidc-auth
         recreate: true
       register: kong_register
     

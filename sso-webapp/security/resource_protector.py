@@ -24,6 +24,8 @@ class ResourceProtector(_ResourceProtector, OAuth2AuthorizationCodeBearer):
         scopes: dict = {},
         auto_error: bool = True
     ):
+        # TODO: Should get X-OAuth-Token from kong-oidc-auth
+        self.token_header = 'x-oauth-token'
         _ResourceProtector.__init__(self)
         OAuth2AuthorizationCodeBearer.__init__(
             self, authorization_url, token_url, refresh_url, scopes, auto_error
@@ -43,7 +45,7 @@ class ResourceProtector(_ResourceProtector, OAuth2AuthorizationCodeBearer):
         TODO: "Authorization: <token_type> token" is the only header type
         authlib allows and kong-oidc uses x-access-token :(
         """
-        userinfo = request.headers.get('x-access-token')
+        userinfo = request.headers.get(self.token_header)
         if not userinfo:
             raise MissingAuthorizationError()
 
@@ -66,8 +68,7 @@ class ResourceProtector(_ResourceProtector, OAuth2AuthorizationCodeBearer):
         """
         if not callable(operator):
             operator = operator.upper()
-        # TODO: Should get X-Access-Token and X-Id-Token from kong
-        if 'x-access-token' in request.headers:
+        if self.token_header in request.headers:
             token = await self.validate_access_token(request, scope.scope_str, operator)
         else:
             token = self.validate_request(scope.scope_str, request, operator)

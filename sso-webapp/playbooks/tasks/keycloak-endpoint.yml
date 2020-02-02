@@ -78,11 +78,11 @@
     - block:
         - name: Check if webapp is registered with keycloak
           uri:
-            url: http://localhost:8001/services/webapp-service/plugins?name=oidc
+            url: http://localhost:8001/services/webapp-service/plugins?name=kong-oidc-auth
             return_content: yes
           register: endpoint_configure
           failed_when: endpoint_configure.json.data == []
-          no_log: True
+          no_log: true
       rescue:
         - name: Configure webapp with keycloak
           uri:
@@ -90,12 +90,20 @@
             method: POST
             body_format: json
             body:
-              name: oidc
+              name: kong-oidc-auth
               config:
                 client_id: webapp
                 client_secret: "{{ client_secret.json.value }}"
-                discovery: "http://{{ ansible_eth1.ipv4.address }}:\
-                  8080/auth/realms/master/.well-known/openid-configuration"
+                authorize_url: "http://{{ ansible_eth1.ipv4.address }}:8080\
+                  /auth/realms/master/protocol/openid-connect/auth"
+                token_url: "http://{{ ansible_eth1.ipv4.address }}:8080\
+                  /auth/realms/master/protocol/openid-connect/token"
+                user_url: "http://{{ ansible_eth1.ipv4.address }}:8080\
+                  /auth/realms/master/protocol/openid-connect/userinfo"
+                app_login_redirect_url: "http://{{ ansible_eth1.ipv4.address }}:8000/webapp"
+                cookie_domain: .localdomain
+                salt: "{{ lookup('password', \
+                  '/dev/null length=16 chars=iascii_letters,digits') }}"
             timeout: 300
             status_code: 201
             return_content: yes

@@ -64,7 +64,7 @@
             return_content: yes
           register: user_register
           failed_when: user_register.json == []
-          no_log: True
+          no_log: true
       rescue:
         - name: Create realm user
           uri:
@@ -86,16 +86,15 @@
             status_code: 201
             return_content: yes
           changed_when: true
-          register: user_register
 
     - block:
         - name: Check if kong is registered with keycloak
           uri:
-            url: http://localhost:8001/plugins?name=oidc
+            url: http://localhost:8001/plugins?name=kong-oidc-auth
             return_content: yes
           register: endpoint_configure
           failed_when: endpoint_configure.json.data == []
-          no_log: True
+          no_log: true
       rescue:
         - name: Configure kong with keycloak
           uri:
@@ -108,13 +107,18 @@
                 client_id: api-gw
                 client_secret: "{{ client_secret.json.value }}"
                 authorize_url: "http://{{ ansible_eth1.ipv4.address }}:8080\
-                  /auth/realms/master/.well-known/openid-configuration"
+                  /auth/realms/master/protocol/openid-connect/auth"
+                token_url: "http://{{ ansible_eth1.ipv4.address }}:8080\
+                  /auth/realms/master/protocol/openid-connect/token"
+                user_url: "http://{{ ansible_eth1.ipv4.address }}:8080\
+                  /auth/realms/master/protocol/openid-connect/userinfo"
+                cookie_domain: .localdomain
+                salt: "{{ lookup('password', \
+                  '/dev/null length=16 chars=iascii_letters,digits') }}"
             timeout: 300
             status_code: 201
             return_content: yes
           changed_when: true
-          register: endpoint_configure
-
   always:
     - name: Logout with KeyCloak
       uri:

@@ -1,0 +1,11 @@
+FROM kong:1.5.0-alpine
+
+LABEL description="Centos 7 + Kong 1.5.0-alpine + kong-oidc-auth plugin"
+
+ENV KONG_PLUGINS=kong-oidc-auth
+
+RUN apk update --no-cache ;\
+  apk upgrade --no-cache ;\
+  apk add --no-cache git unzip ;\
+  luarocks install kong-oidc-auth ;\
+  rm -rf /var/cache/apk/*
