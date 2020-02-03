@@ -5,8 +5,6 @@
     state: "{{ webapp_network_state | d('present') }}"
   loop:
     - webapp-net
-  tags:
-    - networks
 
 - name: Setup volumes for webapp
   docker_volume:
@@ -14,6 +12,4 @@
     state: "{{ webapp_volume_state | d('present') }}"
   loop:
     - webapp-datastore
-  tags:
-    - volumes
 ...
