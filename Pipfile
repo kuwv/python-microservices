@@ -7,6 +7,8 @@ verify_ssl = true
 ansible = "*"
 docker = "*"
 bump2version = "*"
+ansible-lint = "*"
+yamllint = "*"
 
 [packages]
 
@@ -16,3 +18,7 @@ python_version = "3.6"
 [scripts]
 package = "python setup.py bdist_wheel"
 deploy = "ansible-playbook -i localhost, sso/deploy.yml"
+# Linting
+lint-yaml = "yamllint ."
+lint-ansible = "ansible-lint **/*.yml"
+lint = "bash -c 'pipenv run lint-ansible && pipenv run lint-yaml'"

@@ -9,6 +9,7 @@ uvicorn = "*"
 flit = "*"
 black = "*"
 pytest = "*"
+flake8 = "*"
 
 [packages]
 pbr = "*"
@@ -26,12 +27,23 @@ aiofiles = "*"
 
 [scripts]
 requirements = "bash -c 'pipenv lock -r > requirements.txt'"
-build = "bash -c 'pushd static && npm install && npm run build && popd'"
-daphne = "bash -c 'pipenv run build && daphne -b 0.0.0.0 -p 3000 app:app'"
-hypercorn = "bash -c 'pipenv run build && hypercorn -b 0.0.0.0:3000 app:app --reload'"
-uvicorn = "bash -c 'pipenv run build && uvicorn --host 0.0.0.0 --port 3000 app:app --reload'"
-kill = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
-package = "python setup.py bdist_wheel"
+lint = "flake8 ."
+npm-build = "bash -c 'pushd static && npm install && npm run build && popd'"
+
+# hypercorn
+hypercorn = "hypercorn -b 0.0.0.0:3000 app:app --reload"
+build-hypercorn = "bash -c 'pipenv run npm-build && pipenv run hypercorn'"
+kill-hypercorn = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
+
+# daphine
+daphne = "daphne -b 0.0.0.0 -p 3000 app:app"
+build-daphne = "bash -c 'pipenv run build && pipenv run daphne'"
+kill-daphne = "bash -c 'kill -9 $(pgrep -f daphne)'"
+
+# uvicorn
+uvicorn = "uvicorn --host 0.0.0.0 --port 3000 app:app --reload"
+build-uvicorn = "bash -c 'pipenv run build && pipenv run uvicorn'"
+kill-uvicorn = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
 
 [pipenv]
 allow_prereleases = true

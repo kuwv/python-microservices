@@ -11,6 +11,7 @@ from starlette.responses import PlainTextResponse, RedirectResponse
 from security.resource_protector import ResourceProtector
 from starlette.staticfiles import StaticFiles
 
+
 # JWT
 from security.token import (
     JWK, JWKS, JWTBearerTokenValidator, JWTAuthorizationCredentials
@@ -37,7 +38,12 @@ auth.register_token_validator(
 )
 
 app = FastAPI(
-    openapi_prefix=config.oapi_prefix,
+    title=config.title,
+    description=config.description,
+    version=config.version,
+    openapi_url=config.oapi_url,
+    docs_url=config.docs_url,
+    redoc_url=config.redoc_url,
     swagger_ui_oauth2_redirect_url=config.oapi_redirect_url
 )
 
@@ -57,4 +63,4 @@ async def get_credentials(
         return {"msg": "No token found"}
     return token
 
-app.mount("/static", StaticFiles(directory="static/dist"), name="static")
+app.mount(config.static_url, StaticFiles(directory='static/dist', html=True), name='static')

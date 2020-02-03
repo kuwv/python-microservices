@@ -4,13 +4,13 @@
     name: kong:0.14.1-centos-oidc
     source: build
     build:
-      pull: yes
+      pull: true
       path: ../kong
 
 - name: Check if Kong DB is running
   docker_container_info:
     name: kong-db
-  register: kong_db_state 
+  register: kong_db_state
 
 - block:
     - name: Start Kong PostgreSQL DB
@@ -28,6 +28,7 @@
           POSTGRES_DB: api-gw
           POSTGRES_USER: kong
           # POSTGRES_PASSWORD:
+        pull: true
         state: started
       register: kong_db_register
 
@@ -46,7 +47,7 @@
       register: kong_db_running
       until: kong_db_running is success
       retries: 10
-    
+
     - name: Run Kong database migration
       docker_container:
         name: kong-migration
@@ -88,10 +89,10 @@
             links:
               - kong-db
         ports:
-          - '8000:8000' # Listener
-          - '8001:8001' # Admin API
-          - '8443:8443' # Listener  (SSL)
-          - '8444:8444' # Admin API (SSL)
+          - '8000:8000'  # Listener
+          - '8001:8001'  # Admin API
+          - '8443:8443'  # Listener (SSL)
+          - '8444:8444'  # Admin API (SSL)
         env:
           KONG_DATABASE: postgres
           KONG_PG_HOST: kong-db
@@ -106,7 +107,7 @@
           KONG_PLUGINS: oidc
         recreate: true
       register: kong_register
-    
+
     - name: Wait for kong to accept connections
       wait_for:
         host: "{{ kong_register['ansible_facts']\
