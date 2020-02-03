@@ -22,7 +22,7 @@
           POSTGRES_PASSWORD: password
         pull: true
       register: keycloak_db_register
-    
+
     - name: Wait for KeyCloak DB to accept connections
       wait_for:
         host: "{{ keycloak_db_register['ansible_facts']\
@@ -72,7 +72,7 @@
           KEYCLOAK_PASSWORD: admin
         pull: true
       register: keycloak_register
-    
+
     - name: Wait for KeyCloak to accept connections
       wait_for:
         host: "{{ keycloak_register['ansible_facts']\
