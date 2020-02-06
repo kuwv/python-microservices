@@ -37,12 +37,12 @@ kill-hypercorn = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
 
 # daphine
 daphne = "daphne -b 0.0.0.0 -p 3000 app:app"
-build-daphne = "bash -c 'pipenv run build && pipenv run daphne'"
+build-daphne = "bash -c 'pipenv run npm-build && pipenv run daphne'"
 kill-daphne = "bash -c 'kill -9 $(pgrep -f daphne)'"
 
 # uvicorn
 uvicorn = "uvicorn --host 0.0.0.0 --port 3000 app:app --reload"
-build-uvicorn = "bash -c 'pipenv run build && pipenv run uvicorn'"
+build-uvicorn = "bash -c 'pipenv run npm-build && pipenv run uvicorn'"
 kill-uvicorn = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
 
 [pipenv]
