@@ -28,7 +28,7 @@ aiofiles = "*"
 [scripts]
 requirements = "bash -c 'pipenv lock -r > requirements.txt'"
 lint = "flake8 ."
-npm-build = "bash -c 'pushd static && npm install && npm run build && popd'"
+npm-build = "bash -c 'pushd ./ui && npm install && npm run build && popd'"
 
 # hypercorn
 hypercorn = "hypercorn -b 0.0.0.0:3000 app:app --reload"

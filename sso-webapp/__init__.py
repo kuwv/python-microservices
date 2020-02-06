@@ -1,10 +1,12 @@
-"""This is a webapplication"""
+"""This is a web application"""
+from .config import author, name, version
 
-__author__ = 'Jesse P. Johnson'
+__author__ = author
+__name__ = name
+__version__ = version
 
-name = 'WebApp'
-__version__ = '2.1.3'
-
-# __all__ = [
-#     'example'
-# ]
+__all__ = [
+    '__author__',
+    '__name__',
+    '__version__',
+]

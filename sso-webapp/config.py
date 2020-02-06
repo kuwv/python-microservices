@@ -2,16 +2,14 @@ import os
 from pydantic import BaseModel
 from typing import Any, Dict, Optional, List
 
-# from . import name, description
-
-title: tuple = "webapp"
-description: str = "description"
-version: str = "__version__"
+title: tuple = 'webapp'
+description: str = 'This is a web application'
+version: str = '2.1.3'
 
 uri_prefix: str = os.getenv('WEBAPP_URI_PREFIX', '')
 
 # Static URI
-static_url: str = os.getenv('WEBAP_URI_STATIC', f"{uri_prefix}/static")
+static_url: str = os.getenv('WEBAP_URI_STATIC', '/')
 
 # OpenAPI URI
 oapi_prefix: str = os.getenv('WEBAPP_OAPI_PREFIX', uri_prefix)
@@ -19,10 +17,10 @@ oapi_url: str = os.getenv('WEBAPP_OAPI_URL', f"{oapi_prefix}/openapi.json")
 oapi_redirect_url: str = f"{oapi_prefix}/docs/oauth2-redirect"
 
 # Docs URI
-docs_url: str = os.getenv('WEBAPP_URI_DOCS', f"{oapi_prefix}/docs")
+docs_url: str = os.getenv('WEBAPP_URI_DOCS', '/docs')
 
 # ReDoc URI
-redoc_url: str = os.getenv('WEBAPP_URI_REDOC', f"{oapi_prefix}/redoc")
+redoc_url: str = os.getenv('WEBAPP_URI_REDOC', '/redoc')
 
 # TODO: Provide OpenID-Connect alternative
 auth_connection: str = os.getenv('WEBAPP_AUTH_CONNECTION', 'http')

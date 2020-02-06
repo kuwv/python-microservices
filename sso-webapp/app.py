@@ -63,4 +63,4 @@ async def get_credentials(
         return {"msg": "No token found"}
     return token
 
-app.mount(config.static_url, StaticFiles(directory='static/dist', html=True), name='static')
+app.mount(config.static_url, StaticFiles(directory='static', html=True), name='static')
