@@ -134,7 +134,7 @@ venv.bak/
 
 ### JavaScript ###
 led output
-dist/
+static/
 tmp/
 out-tsc/
 
