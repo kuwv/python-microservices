@@ -2,13 +2,13 @@ FROM node:lts-alpine AS build
 
 WORKDIR /app
 
-COPY ./static/package*.json /app/
+COPY ./ui/package*.json /app/
 
 RUN apk add --no-cache --virtual .build-deps python3 ;\
   npm install @vue/cli @vue/cli-service-global -g ;\
   npm install
 
-COPY ./static /app
+COPY ./ui /app
 
 RUN npm run build
 
@@ -18,8 +18,7 @@ RUN adduser -D -h /app webapp
 
 WORKDIR /app
 COPY . /app
-RUN rm -rf /app/static
-COPY --from=build /app/dist /app/static/dist
+COPY --from=build /app/dist /app/static
 
 RUN apk update --no-cache ;\
   apk upgrade --no-cache ;\
