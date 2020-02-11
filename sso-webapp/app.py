@@ -47,20 +47,21 @@ app = FastAPI(
     swagger_ui_oauth2_redirect_url=config.oapi_redirect_url
 )
 
-@app.get("/secure", dependencies=[Depends(auth)])
+@app.get('/secure', dependencies=[Depends(auth)])
 async def secure() -> bool:
     return True
 
-@app.get("/insecure")
+@app.get('/insecure')
 async def insecure() -> bool:
     return True
 
-@app.get("/token", response_model=JWTAuthorizationCredentials)
+@app.get('/token', response_model=JWTAuthorizationCredentials)
 async def get_credentials(
     token: JWTAuthorizationCredentials = Security(auth, scopes=['profile', 'email'])
 ):
     if token is None:
-        return {"msg": "No token found"}
+        return {'msg': 'No token found'}
     return token
 
+app.mount('/api', app)
 app.mount(config.static_url, StaticFiles(directory='static', html=True), name='static')

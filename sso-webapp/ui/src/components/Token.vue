@@ -9,7 +9,7 @@
       </thead>
       <tbody>
         <tr> 
-          <th scope="row">{{insecure}}</th>
+          <th scope="row">{{ insecure_endpoint }}</th>
         </tr>
       </tbody>
     </table> 
@@ -17,20 +17,22 @@
 </template>
 
 <script>
-  import axios from 'axios';
+  import {RESTClient} from '../rest_client';
+
+  const restClient = new RESTClient();
 
   export default {
     name: 'Token',
     data() {
       return {
-        insecure: false,
+        insecure_endpoint: false,
       };
     },
     created: function() {
-      axios
-        .get('http://localhost:3000/insecure')
+      restClient.instance
+        .get('/api/insecure')
         .then(res => {
-          this.insecure = res.data;
+          this.insecure_endpoint = res.data;
         })
     }
   }
