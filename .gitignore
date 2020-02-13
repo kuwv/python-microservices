@@ -135,6 +135,7 @@ venv.bak/
 ### JavaScript ###
 led output
 static/
+# sso-webapp/templates/
 tmp/
 out-tsc/
 

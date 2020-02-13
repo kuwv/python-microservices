@@ -79,7 +79,7 @@
           DB_PASSWORD: password
           WEBAPP_USER: admin
           WEBAPP_PASSWORD: admin
-          WEBAPP_SVC_AUTH_HOST: keycloak
+          WEBAPP_AUTH_SVC_HOST: keycloak
           WEBAPP_URI_PREFIX: /webapp
       register: webapp_register
 

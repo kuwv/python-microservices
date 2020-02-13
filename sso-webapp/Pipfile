@@ -24,23 +24,21 @@ authlib = "*"
 httpx = "*"
 twisted = {extras = ["http2", "tls"],version = "*"}
 aiofiles = "*"
+jinja2 = "*"
 
 [scripts]
 requirements = "bash -c 'pipenv lock -r > requirements.txt'"
 lint = "flake8 ."
-clean = "rm -rf ./static ./ui/node_modules"
-npm-build = "bash -c 'pushd ./ui && npm install && npm run build -- --dest ../static && popd'"
-
+clean = "rm -rf ./static ./ui/node_modules ./templates"
+npm-build = "bash -c 'pushd ./ui && npm install && npm run build && popd'"
 # hypercorn
 hypercorn = "hypercorn -b 0.0.0.0:3000 app:app --reload"
 build-hypercorn = "bash -c 'pipenv run npm-build && pipenv run hypercorn'"
 kill-hypercorn = "bash -c 'kill -9 $(pgrep -f uvicorn)'"
-
 # daphine
 daphne = "daphne -b 0.0.0.0 -p 3000 app:app"
 build-daphne = "bash -c 'pipenv run npm-build && pipenv run daphne'"
 kill-daphne = "bash -c 'kill -9 $(pgrep -f daphne)'"
-
 # uvicorn
 uvicorn = "uvicorn --host 0.0.0.0 --port 3000 app:app --reload"
 build-uvicorn = "bash -c 'pipenv run npm-build && pipenv run uvicorn'"

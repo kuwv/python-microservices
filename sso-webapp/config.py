@@ -45,24 +45,24 @@ refresh_url: str = os.getenv(
 )
 
 # Connection between SSO and APP
-svc_auth_client_id: str = os.getenv('WEBAPP_SVC_AUTH_CLIENT_ID')
-svc_auth_client_secret: str = os.getenv('WEBAPP_SVC_AUTH_CLIENT_SECRET')
-svc_auth_connection: str = os.getenv(
-    'WEBAPP_SVC_AUTH_CONNECTION', auth_connection
+auth_svc_client_id: str = os.getenv('WEBAPP_AUTH_SVC_CLIENT_ID')
+auth_svc_client_secret: str = os.getenv('WEBAPP_AUTH_SVC_CLIENT_SECRET')
+auth_svc_connection: str = os.getenv(
+    'WEBAPP_AUTH_SVC_CONNECTION', auth_connection
 )
-svc_auth_host: str = os.getenv('WEBAPP_SVC_AUTH_HOST', auth_host)
-svc_auth_port: int = os.getenv('WEBAPP_SVC_AUTH_PORT', auth_port)
-svc_auth_url_base: str = os.getenv(
-    'WEBAPP_SVC_AUTH_URL_BASE',
-    f"{svc_auth_connection}://{svc_auth_host}:{svc_auth_port}/auth/realms/{auth_realm}"
+auth_svc_host: str = os.getenv('WEBAPP_AUTH_SVC_HOST', auth_host)
+auth_svc_port: int = os.getenv('WEBAPP_AUTH_SVC_PORT', auth_port)
+auth_svc_url_base: str = os.getenv(
+    'WEBAPP_AUTH_SVC_URL_BASE',
+    f"{auth_svc_connection}://{auth_svc_host}:{auth_svc_port}/auth/realms/{auth_realm}"
 )
 svc_jwks_url: str = os.getenv(
     'WEBAPP_SVC_JWKS_URL',
-    f'{svc_auth_url_base}/protocol/openid-connect/certs'
+    f'{auth_svc_url_base}/protocol/openid-connect/certs'
 )
 svc_introspect_url: str = os.getenv(
     'WEBAPP_SVC_INTROSPECT_URL',
-    f"{svc_auth_url_base}/protocol/openid-connect/token/introspect"
+    f"{auth_svc_url_base}/protocol/openid-connect/token/introspect"
 )
 
 # authlib configuration
