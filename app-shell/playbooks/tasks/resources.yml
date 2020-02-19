@@ -1,0 +1,34 @@
+---
+- name: Setup network for dmz
+  docker_network:
+    name: "{{ item }}"
+    state: "{{ webapp_network_state | d('present') }}"
+  loop:
+    - dmz-net
+  tags:
+    - networks
+
+- name: Ensure directory exists for local self-signed TLS certs.
+  file:
+    path: /etc/pki/docker/
+    state: "{{ proxy_tls_state | d('directory') }}"
+
+- block:
+    - name: Generate an OpenSSL private key
+      openssl_privatekey:
+        path: /etc/pki/docker/proxy.key.pem
+    
+    - name: Generate an OpenSSL CSR
+      openssl_csr:
+        path: /etc/pki/docker/proxy.csr.pem
+        privatekey_path: /etc/pki/docker/proxy.key.pem
+        common_name: localhost
+    
+    - name: Generate a OpenSSL self-signed certificate
+      openssl_certificate:
+        path: /etc/pki/docker/proxy.crt.pem
+        privatekey_path: /etc/pki/docker/proxy.key.pem
+        csr_path: /etc/pki/docker/proxy.csr.pem
+        provider: selfsigned
+  when: proxy_tls_state | d('present') == 'present'
+...

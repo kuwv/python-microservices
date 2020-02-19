@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: true
+  connection: local
+
+  tasks:
+    - name: Execute resource setup tasks
+      import_tasks: tasks/resources.yml
+      tags:
+        - app_shell
+
+    - name: Execute NGINX setup tasks
+      import_tasks: tasks/nginx.yml
+      tags:
+        - app_shell
+
+    - name: Execute endpoint setup tasks
+      import_tasks: tasks/keycloak-endpoint.yml
+      tags:
+        - keycloak_endpoint
+        - endpoint
+...

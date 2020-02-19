@@ -4,15 +4,12 @@
   connection: local
 
   tasks:
-    - name: Remove SSO containers
+    - name: Remove DMZ containers
       docker_container:
         name: "{{ item }}"
         state: absent
       loop:
-        - keycloak
-        - keycloak-db
-        - kong
-        - kong-db
+        - nginx
       tags:
         - containers
 
@@ -20,4 +17,5 @@
       import_tasks: tasks/resources.yml
       vars:
         sso_network_state: absent
+        proxy_tls_state: absent
 ...

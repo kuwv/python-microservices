@@ -1,5 +1,5 @@
 ---
-- name: Setup network for KeyCloak / Kong
+- name: Setup networks
   docker_network:
     name: "{{ item }}"
     state: "{{ sso_network_state | d('present') }}"
@@ -10,7 +10,7 @@
   tags:
     - networks
 
-- name: Setup volumes for KeyCloak / Kong
+- name: Setup volumes
   docker_volume:
     name: "{{ item }}"
     state: "{{ sso_volume_state | d('present') }}"

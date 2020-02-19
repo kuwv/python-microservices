@@ -1,0 +1,55 @@
+---
+- block:
+    - name: Authenticate with KeyCloak
+      uri:
+        url: "http://localhost:8080/auth/realms/master\
+          /protocol/openid-connect/token"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          client_id: admin-cli
+          username: admin
+          password: admin
+          grant_type: password
+        return_content: true
+      until: sso_auth.status != -1
+      retries: 10
+      delay: 1
+      register: sso_auth
+
+    - name: Set KeyCloak access token
+      set_fact:
+        token: "{{ sso_auth.json.access_token }}"
+
+    - name: Create KeyCloak client
+      keycloak_client:
+        auth_client_id: admin-cli
+        auth_keycloak_url: http://localhost:8080/auth
+        auth_realm: master
+        auth_username: admin
+        auth_password: admin
+        client_id: app-shell
+        protocol: openid-connect
+        public_client: true
+        root_url: https://localhost
+        redirect_uris:
+          - https://localhost/*
+        direct_access_grants_enabled: true
+        standard_flow_enabled: true
+        client_authenticator_type: client-secret
+        state: present
+      register: client_register
+
+  always:
+    - name: Logout with KeyCloak
+      uri:
+        url: "http://localhost:8080/auth/realms/master\
+          /protocol/openid-connect/logout"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          client_id: admin-cli
+          refresh_token: "{{ sso_auth.json.refresh_token }}"
+        status_code: 204
+      when: sso_auth.json is defined
+...

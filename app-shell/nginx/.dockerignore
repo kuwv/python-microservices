@@ -1,0 +1,11 @@
+# Project
+*.bak
+
+# Git
+.gitattributes
+.gitignore
+
+# Javascript
+**/dist/
+**/node_modules/
+**/static/

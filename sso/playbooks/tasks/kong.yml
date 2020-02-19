@@ -27,7 +27,7 @@
         env:
           POSTGRES_DB: api-gw
           POSTGRES_USER: kong
-          # POSTGRES_PASSWORD:
+          POSTGRES_PASSWORD: kong
         pull: true
         state: started
       register: kong_db_register
@@ -67,6 +67,8 @@
           KONG_PG_HOST: kong-db
           KONG_PG_PORT: '5432'
           KONG_PG_DATABASE: api-gw
+          KONG_PG_UESR: kong
+          KONG_PG_PASSWORD: kong
   when: not kong_db_state.exists
 
 - name: Check if Kong is running
@@ -98,6 +100,8 @@
           KONG_PG_HOST: kong-db
           KONG_PG_PORT: '5432'
           KONG_PG_DATABASE: api-gw
+          KONG_PG_USER: kong
+          KONG_PG_PASSWORD: kong
           KONG_PROXY_ACCESS_LOG: /dev/stdout
           KONG_ADMIN_ACCESS_LOG: /dev/stdout
           KONG_PROXY_ERROR_LOG: /dev/stderr

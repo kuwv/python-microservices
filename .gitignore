@@ -1,5 +1,6 @@
 # General
 .vagrant/
+certs/
 
 # Log files (if you are creating logs in debug mode, uncomment this)
 *.log
@@ -134,7 +135,7 @@ venv.bak/
 
 ### JavaScript ###
 led output
-static/
+sso-webapp/static/
 # sso-webapp/templates/
 tmp/
 out-tsc/

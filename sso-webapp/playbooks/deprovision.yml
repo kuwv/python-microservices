@@ -14,7 +14,7 @@
       tags:
         - containers
 
-    - name: Execute resources removal tasks
+    - name: Execute resource removal tasks
       import_tasks: tasks/resources.yml
       vars:
         sso_network_state: absent
