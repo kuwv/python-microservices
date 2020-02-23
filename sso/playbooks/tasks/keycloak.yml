@@ -62,6 +62,7 @@
         ports:
           - '8080:8080'
         env:
+          PROXY_ADDRESS_FORWARDING: 'true'
           DB_VENDOR: POSTGRES
           DB_ADDR: keycloak-db
           DB_PORT: '5432'

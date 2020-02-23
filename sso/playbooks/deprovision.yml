@@ -12,6 +12,7 @@
         - keycloak
         - keycloak-db
         - kong
+        - kong-migration
         - kong-db
       tags:
         - containers

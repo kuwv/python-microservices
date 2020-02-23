@@ -42,11 +42,22 @@ stop-webapp: ## Stop webapp instance
 .PHONY: rebuild-webapp
 rebuild-webapp: stop-webapp start-webapp ## Rebuild webapp instance
 
+.PHONY: start-proxy
+start-proxy: ## Start proxy instance
+	ansible-playbook -i localhost, app-shell/deploy.yml
+
+.PHONY: stop-proxy
+stop-proxy: ## Stop webapp instance
+	ansible-playbook -i localhost, app-shell/deploy.yml --tags=remove
+
+.PHONY: rebuild-proxy
+rebuild-proxy: stop-proxy start-proxy ## Rebuild proxy instance
+
 .PHONY: start
-start: start-sso start-webapp ## Start all stack components
+start: start-sso start-webapp start-proxy ## Start all stack components
 
 .PHONY: stop
-stop: stop-webapp stop-sso ## Stop all stack components
+stop: stop-proxy stop-webapp stop-sso ## Stop all stack components
 
 .PHONY: clean
 clean: stop ## Stop and Clean environment

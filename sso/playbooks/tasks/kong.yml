@@ -60,7 +60,7 @@
         detach: "{{ sso_debug | d(omit) }}"
         # TODO: bootstrap instead of up for newer versions
         command: kong migrations up
-        # TODO: auto_remove requires newer docker python
+        # TODO: auto_remove requires newer docker python globally
         # auto_remove: true
         env:
           KONG_DATABASE: postgres
