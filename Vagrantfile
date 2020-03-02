@@ -68,19 +68,21 @@ Vagrant.configure('2') do |config|
     interface = 'en0: Wi-Fi (AirPort)'
   end
 
-  config.vm.hostname = "sso-stack"
+  config.vm.hostname = 'sso-stack'
   # config.vagrant.plugins = 'vagrant-libvirt'
   if Vagrant.has_plugin?('vagrant-libvirt')
     config.vm.box = 'centos/7'
-    config.vm.define "sso-stack" do |config|
+    config.vm.define 'sso-stack' do |config|
       config.vm.network 'public_network',
         type: 'bridge',
         mode: 'bridge',
         dev: "#{interface}"
 
-      config.vm.provider "libvirt" do |lv|
-        lv.memory = 1024
-        lv.cpus = 1
+      config.vm.provider 'libvirt' do |lv|
+        lv.memory = 4096
+        lv.cpus = 2
+        # lv.storage_pool_name = 'default'
+        # lv.storage_pool_path = '/var/lib/libvirt/images'
       end
 
       config.vm.synced_folder './', '/vagrant', type: 'rsync'
@@ -96,8 +98,9 @@ Vagrant.configure('2') do |config|
   # Proxy
   config.vm.network 'forwarded_port', guest: 80, host: 80
   config.vm.network 'forwarded_port', guest: 443, host:443
-  # Development
+  # UI Public
   config.vm.network 'forwarded_port', guest: 3000, host: 3000
+  config.vm.network 'forwarded_port', guest: 3001, host: 3001
   # Kong Public
   config.vm.network 'forwarded_port', guest: 8000, host: 8000
   config.vm.network 'forwarded_port', guest: 8443, host: 8443
@@ -109,8 +112,8 @@ Vagrant.configure('2') do |config|
 
   config.ssh.forward_agent = true
 
-  # if File.exist?("~/.gitconfig")
-  config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
+  # if File.exist?('~/.gitconfig')
+  config.vm.provision 'file', source: '~/.gitconfig', destination: '.gitconfig'
   # end
 
   config.vm.provision 'base', type: 'shell', inline: $base
