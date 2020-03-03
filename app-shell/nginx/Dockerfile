@@ -20,4 +20,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY conf.d /etc/nginx/conf.d/
 COPY --from=build /usr/local/src/dist /usr/share/nginx/html
 
+RUN apk add --no-cache nodejs npm ;\
+  npm install piral-cli -g
+
 EXPOSE 80 443

@@ -13,10 +13,12 @@ pyopenssl = "*"
 
 [packages]
 
-[requires]
-python_version = "3.6"
+# [requires]
+# python_version = "3.6"
 
 [scripts]
+check-yaml = "yamllint ."
+check-vagrant = "vagrant validate"
 package = "python setup.py bdist_wheel"
 deploy = "ansible-playbook -i localhost, sso/deploy.yml"
 # Linting
