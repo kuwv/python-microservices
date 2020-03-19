@@ -3,6 +3,7 @@ import os
 import requests
 import config
 from fastapi import Depends, FastAPI, Security
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import SecurityScopes
 from pydantic import BaseModel
 from urllib.parse import urlencode
@@ -11,6 +12,12 @@ from starlette.responses import PlainTextResponse, RedirectResponse
 from security.resource_protector import ResourceProtector
 from starlette.staticfiles import StaticFiles
 
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
 
 # JWT
 from security.token import (
@@ -45,6 +52,14 @@ app = FastAPI(
     docs_url=config.docs_url,
     redoc_url=config.redoc_url,
     swagger_ui_oauth2_redirect_url=config.oapi_redirect_url
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
 @app.get('/secure', dependencies=[Depends(auth)])

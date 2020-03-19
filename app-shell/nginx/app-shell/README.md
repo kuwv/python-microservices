@@ -1,52 +1,69 @@
-# `app-shell`
+# Vue Microfrontends root-config
 
-This project is bootstrapped by [aurelia-cli](https://github.com/aurelia/cli).
+[![CircleCI](https://circleci.com/gh/vue-microfrontends/root-config.svg?style=svg)](https://circleci.com/gh/vue-microfrontends/root-config)
 
-For more information, go to https://aurelia.io/docs/cli/webpack
+## What is this?
 
-## Run dev app
+This is an example microfrontend repo demonstrating how to use [single-spa](https://single-spa.js.org). You can see the code running at https://vue.microfrontends.app.
 
-Run `npm start`, then open `http://localhost:8080`
+## How does it work?
 
-You can change the standard webpack configurations from CLI easily with something like this: `npm start -- --open --port 8888`. However, it is better to change the respective npm scripts or `webpack.config.js` with these options, as per your need.
+[Full article](https://single-spa.js.org/docs/recommended-setup)
 
-To enable Webpack Bundle Analyzer, do `npm run analyze` (production build).
+This repository is a javascript project that creates a javascript bundle that is an in-browser javascript module (explanation on [youtube](https://www.youtube.com/watch?v=Jxqiu6pdMSU&list=PLLUD8RtHvsAOhtHnyGx57EYXoaNsxGrTU&index=2) / [bilibili](https://www.bilibili.com/video/av83498486/)). The currently deployed version of the in-browser module can be seen at https://vue.microfrontends.app/importmap.json.
 
-To enable hot module reload, do `npm start -- --hmr`.
+This project uses [Vue](https://vuejs.org) and was created with the [create-single-spa](https://single-spa.js.org/docs/create-single-spa) CLI. It uses webpack and babel.
 
-To change dev server port, do `npm start -- --port 8888`.
+Whenever a pull request is merged to master, [CircleCI builds and deploys the project](https://circleci.com/gh/vue-microfrontends/root-config). The ["workflows" view](https://circleci.com/gh/vue-microfrontends/workflows) (pictured below) can be seen if you are logged into CircleCI. Deployments for this in-browser module are completely independent of deployments for any other module.
 
-To change dev server host, do `npm start -- --host 127.0.0.1`
+![image](https://user-images.githubusercontent.com/5524384/75210801-5ba02700-573f-11ea-8064-46af165cba0a.png)
 
-**PS:** You could mix all the flags as well, `npm start -- --host 127.0.0.1 --port 7070 --open --hmr`
+## Local development
 
-For long time aurelia-cli user, you can still use `au run` with those arguments like `au run --env prod --open --hmr`. But `au run` now simply executes `npm start` command.
+[Full documentation](https://single-spa.js.org/docs/recommended-setup#local-development)
 
-## Build for production
+Tutorial video: [youtube](https://www.youtube.com/watch?v=vjjcuIxqIzY&list=PLLUD8RtHvsAOhtHnyGx57EYXoaNsxGrTU&index=4) / [bilibili](https://www.bilibili.com/video/av83617789/)
 
-Run `npm run build`, or the old way `au build --env prod`.
+There are two ways to do local development. It is preferred to do one module at a time, whenever possible.
 
-## Unit tests
+### One module at a time
 
-Run `au test` (or `au jest`).
+```sh
+cd root-config
+yarn install
+yarn start --https
+```
 
-To run in watch mode, `au test --watch` or `au jest --watch`.
+Go to https://localhost:9000/vue-mf-root-config.js and verify that you are able to load the file without any SSL problems. To solve SSL problems, see [these instructions](https://improveandrepeat.com/2016/09/allowing-self-signed-certificates-on-localhost-with-chrome-and-firefox/).
 
-## Integration (e2e) tests
+Now, go to https://vue.microfrontends.app. In the browser console, run the following:
 
-You need the app running for integration test.
+```js
+localStorage.setItem('devtools', true);
+```
 
-First, run `au run` and keep it running.
+Refresh the page. Click on the tan / beige rectangle:
 
-Then run `au protractor`.
+![image](https://user-images.githubusercontent.com/5524384/75211359-e46b9280-5740-11ea-80bb-974846df414b.png)
 
-To perform a test-run in interactive mode, do `au protractor`.
+Set an [import map override](https://github.com/joeldenning/import-map-overrides/) to `9000`.
 
-To ask the `protractor` to start the application first and then start testing: `au protractor --headless --start`
+![image](https://user-images.githubusercontent.com/5524384/75211553-7e333f80-5741-11ea-97d6-d3d86ffd1826.png)
 
-The two following flags are useful when using `--start` flag:
- * To change dev server port, do `au protractor --start --port 8888`.
- * To change dev server host, do `au protractor --start --host 127.0.0.1`
+Refresh the page. Your local code for this module will now be running on https://vue.microfrontends.app. You may make changes locally and refresh the page to see them.
 
+### All modules together
 
-**PS:** It is also possible to mix the flags `au protractor --headless --start --port 7070 --host 127.0.0.1`
+Run the root-config project locally:
+
+```
+cd root-config
+yarn install
+yarn start
+```
+
+Now follow the steps above for "One module at a time" for each of the modules you wish to work on.
+
+## Adapting for your organization
+
+Feel free to fork and modify any files you would like when doing a proof of concept for your organization. When it's time to actually create / adapt your organization's projects, consider using [create-single-spa](https://single-spa.js.org/docs/create-single-spa) instead of forking this repository.
