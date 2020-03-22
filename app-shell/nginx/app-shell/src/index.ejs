@@ -3,20 +3,23 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Your application</title>
+    <title>Microservices</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="importmap-type" content="systemjs-importmap">
     <script type="systemjs-importmap">
       {
         "imports": {
-          "vue": "https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js",
-          "vue-router": "https://cdn.jsdelivr.net/npm/vue-router@3.0.7/dist/vue-router.min.js",
           "webapp": "http://localhost:3000/js/app.js",
-          "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@4.4.1/lib/system/single-spa.min.js"
+          "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@4.4.2/lib/system/single-spa.min.js",
+          "vue": "https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js",
+          "vue-router": "https://cdn.jsdelivr.net/npm/vue-router@3.0.7/dist/vue-router.min.js",
+          "axios": "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"
         }
       }
     </script>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/single-spa@4.4.1/lib/system/single-spa.min.js" as="script" crossorigin="anonymous" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/single-spa@4.4.2/lib/system/single-spa.min.js" as="script" crossorigin="anonymous" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js" as="script" crossorigin="anonymous" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vue-router@3.0.7/dist/vue-router.min.js" as="script" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/import-map-overrides@1.10.1/dist/import-map-overrides.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/systemjs@6.1.9/dist/system.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/systemjs@6.1.9/dist/extras/amd.min.js"></script>
@@ -25,14 +28,18 @@
   </head>
   <body>
     <script>
-      System.import('single-spa').then(function (singleSpa) {
-        singleSpa.registerApplication(
-          'webapp',
-          () => System.import('webapp'),
-          location => location.pathname.startsWith('/')
-        );
-        singleSpa.start();
-      })
+      (function() {
+        Promise.all([System.import('single-spa'), System.import('vue'), System.import('vue-router')]).then(function (modules) {
+          var singleSpa = modules[0];
+
+          singleSpa.registerApplication(
+            'webapp',
+            () => System.import('webapp'),
+            location => location.pathname.startsWith('/')
+          );
+          singleSpa.start();
+        })
+      })()
     </script>
     <!-- See https://github.com/joeldenning/import-map-overrides#user-interface  -->
     <import-map-overrides-full show-when-local-storage="overrides-ui"></import-map-overrides-full>

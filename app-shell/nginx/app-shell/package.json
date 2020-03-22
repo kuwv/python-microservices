@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "webpack-dev-server --mode=development --port 3001 --env.isLocal=true",
+    "start": "webpack-dev-server --mode=development --host=0.0.0.0 --port 3001 --env.isLocal=true",
     "lint": "eslint src",
     "test": "jest",
     "prettier": "prettier --write './**'",
@@ -12,11 +12,11 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
     "@types/systemjs": "^6.1.0",
     "babel-eslint": "^11.0.0-beta.2",
-    "babel-loader": "^8.0.6",
+    "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "concurrently": "^5.0.2",
     "eslint": "^6.7.2",

@@ -23,13 +23,13 @@ docs_url: str = os.getenv('WEBAPP_URI_DOCS', '/docs')
 redoc_url: str = os.getenv('WEBAPP_URI_REDOC', '/redoc')
 
 # TODO: Provide OpenID-Connect alternative
-auth_scheme: str = os.getenv('WEBAPP_AUTH_SCHEME', 'http')
+auth_protocol: str = os.getenv('WEBAPP_AUTH_PROTOCOL', 'http')
 auth_host: str = os.getenv('WEBAPP_AUTH_HOST', 'localhost')
 auth_port: int = os.getenv('WEBAPP_AUTH_PORT', '8080')
 auth_realm: str = os.getenv('WEBAPP_AUTH_REALM', 'master')
 auth_url_base: str = os.getenv(
     'WEBAPP_AUTH_URL_BASE',
-    f"{auth_scheme}://{auth_host}:{auth_port}/auth/realms/{auth_realm}"
+    f"{auth_protocol}://{auth_host}:{auth_port}/auth/realms/{auth_realm}"
 )
 authorization_url: str = os.getenv(
     'WEBAPP_AUTH_URL',
@@ -47,14 +47,14 @@ refresh_url: str = os.getenv(
 # Connection between SSO and APP
 auth_svc_client_id: str = os.getenv('WEBAPP_AUTH_SVC_CLIENT_ID')
 auth_svc_client_secret: str = os.getenv('WEBAPP_AUTH_SVC_CLIENT_SECRET')
-auth_svc_scheme: str = os.getenv(
-    'WEBAPP_AUTH_SVC_SCHEME', auth_scheme
+auth_svc_protocol: str = os.getenv(
+    'WEBAPP_AUTH_SVC_PROTOCOL', auth_protocol
 )
 auth_svc_host: str = os.getenv('WEBAPP_AUTH_SVC_HOST', auth_host)
 auth_svc_port: int = os.getenv('WEBAPP_AUTH_SVC_PORT', auth_port)
 auth_svc_url_base: str = os.getenv(
     'WEBAPP_AUTH_SVC_URL_BASE',
-    f"{auth_svc_scheme}://{auth_svc_host}:{auth_svc_port}/auth/realms/{auth_realm}"
+    f"{auth_svc_protocol}://{auth_svc_host}:{auth_svc_port}/auth/realms/{auth_realm}"
 )
 svc_jwks_url: str = os.getenv(
     'WEBAPP_SVC_JWKS_URL',

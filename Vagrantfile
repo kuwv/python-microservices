@@ -115,7 +115,7 @@ Vagrant.configure('2') do |config|
   config.ssh.forward_agent = true
 
   # if File.exist?('~/.gitconfig')
-  config.vm.provision 'file', source: '~/.gitconfig', destination: '.gitconfig'
+  config.vm.provision 'file', source: '~/.gitconfig', destination: '~/.gitconfig'
   # end
 
   config.vm.provision 'base', type: 'shell', inline: $base

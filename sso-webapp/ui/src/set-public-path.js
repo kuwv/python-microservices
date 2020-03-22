@@ -1,3 +1,4 @@
 import { setPublicPath } from 'systemjs-webpack-interop';
+import { endpoint_name } from './config';
 
-setPublicPath('webapp');
+setPublicPath(endpoint_name);
