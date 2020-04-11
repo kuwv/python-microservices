@@ -13,10 +13,10 @@ from security.resource_protector import ResourceProtector
 from starlette.staticfiles import StaticFiles
 
 
+# TODO: Dynamically set origins
 origins = [
-    "http://localhost",
-    "http://localhost:3000",
-    "http://localhost:3001",
+  'http://localhost:3000',
+  'http://localhost:3001',
 ]
 
 # JWT
@@ -54,6 +54,9 @@ app = FastAPI(
     swagger_ui_oauth2_redirect_url=config.oapi_redirect_url
 )
 
+"""TODO: Limit headers:
+ - Access-Control-Allow-Headers: Authorization
+"""
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -66,8 +69,8 @@ app.add_middleware(
 async def secure() -> bool:
     return True
 
-@app.get('/insecure')
-async def insecure() -> bool:
+@app.get('/unsecure')
+async def unsecure() -> bool:
     return True
 
 @app.get('/token', response_model=JWTAuthorizationCredentials)

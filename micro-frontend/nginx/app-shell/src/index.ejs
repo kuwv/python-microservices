@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Microservices</title>
+    <title>Python Microservices</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="importmap-type" content="systemjs-importmap">
     <script type="systemjs-importmap">
@@ -28,18 +28,15 @@
   </head>
   <body>
     <script>
-      (function() {
-        Promise.all([System.import('single-spa'), System.import('vue'), System.import('vue-router')]).then(function (modules) {
-          var singleSpa = modules[0];
-
-          singleSpa.registerApplication(
-            'webapp',
-            () => System.import('webapp'),
-            location => location.pathname.startsWith('/')
-          );
-          singleSpa.start();
-        })
-      })()
+      Promise.all([System.import('single-spa'), System.import('vue'), System.import('vue-router')]).then(function (modules) {
+        var singleSpa = modules[0];
+        singleSpa.registerApplication(
+          'webapp',
+          () => System.import('webapp'),
+          location => location.pathname.startsWith('/')
+        );
+        singleSpa.start();
+      })
     </script>
     <!-- See https://github.com/joeldenning/import-map-overrides#user-interface  -->
     <import-map-overrides-full show-when-local-storage="overrides-ui"></import-map-overrides-full>

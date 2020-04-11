@@ -1,19 +1,17 @@
 <template>
   <div id="app">
-    <Token />
+    <!-- Token/ -->
+    <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <!-- router-link to="/token">Token</router-link> | -->
+      <!-- router-link to="/profile">Profile</router-link> | -->
+      <router-link to="/about">About</router-link>
+    </div>
+    <router-view/>
   </div>
 </template>
 
-<script>
-import Token from './components/Token.vue'
-
-export default {
-  name: 'app',
-  components: {
-    Token
-  }
-}
-</script>
+<script/>
 
 <style>
 #app {
