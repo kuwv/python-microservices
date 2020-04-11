@@ -4,10 +4,6 @@
 </template>
 
 <script>
-import RESTClient from '@/services/rest'
-
-const client = new RESTClient().instance;
-
 export default {
   data () {
     return {
@@ -16,7 +12,7 @@ export default {
     }
   },
   mounted () {
-    client.get('/secure')
+    this.$http.get('/secure')
       .then(response => {
         this.secure_state = response.data;
       })

@@ -36,4 +36,10 @@ class RESTClient {
   }
 }
 
-export default RESTClient;
+export const restClient = new RESTClient();
+
+export default {
+  install: function (Vue) {
+    Vue.prototype.$http = restClient;
+  }
+}

@@ -4,19 +4,16 @@ import singleSpaVue from 'single-spa-vue';
 import App from '@/App.vue';
 import router from '@/router';
 import auth from '@/services/auth';
-// import RESTClient as http from '@/services/rest';
+import http from '@/services/rest';
 
 Vue.config.productionTip = false;
 Vue.use(auth);
-// Vue.use(http);
+Vue.use(http);
 
 const vueLifecycles = singleSpaVue({
   Vue,
   appOptions: {
     router,
-    // created () {
-    //   init()
-    // },
     render: (h) => h(App),
   },
 });
