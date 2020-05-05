@@ -14,7 +14,7 @@ RUN npm run build -- --dest ./dist
 
 FROM python:3.7-alpine
 
-RUN adduser -D -h /app webapp
+RUN adduser -D -h /usr/local/app webapp
 
 WORKDIR /usr/local/app
 COPY . /usr/local/app
@@ -31,7 +31,8 @@ RUN apk update --no-cache ;\
     musl-dev ;\
   pip install --no-cache-dir -r requirements.txt ;\
   apk del --no-cache --purge .build-deps ;\
-  rm -rf /var/cache/apk/*
+  rm -rf /var/cache/apk/*  ;\
+  chown webapp:root /usr/local/app/static/config.json
 
 USER webapp
 CMD ["daphne", "-b", "0.0.0.0", "-p", "3000", "app:app"]

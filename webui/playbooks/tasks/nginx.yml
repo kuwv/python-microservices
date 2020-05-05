@@ -4,6 +4,8 @@
     name: nginx:stable-alpine
     source: build
     build:
+      args:
+        PUBLIC_HOSTNAME: "{{ public_hostname }}"
       pull: true
       path: ../nginx
     force_source: true
@@ -30,6 +32,8 @@
           - '443:443'  # Listener (SSL)
         volumes:
           - /etc/pki/docker:/etc/ssl/nginx
+        env:
+          PUBLIC_HOSTNAME: "{{ public_hostname }}"
         recreate: true
       register: nginx_register
 

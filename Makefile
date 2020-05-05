@@ -9,60 +9,61 @@ help:
 	@echo
 
 .PHONY: lint-yaml
-lint-yaml: ## Perform YAML lint
+lint-yaml:  ## Perform YAML lint
 	yamllint .
 
 .PHONY: lint-ansible
-lint-ansible: ## Perform Ansible lint
+lint-ansible:  ## Perform Ansible lint
 	ansible-lint **/*.yml
 
 .PHONY: lint
-lint: lint-ansible lint-yaml ## Peform lint
+lint: lint-ansible lint-yaml  ## Peform lint
 
 .PHONY: start-sso
-start-sso: ## Start SSO instances
+start-sso:  ## Start SSO instances
 	ansible-playbook -i localhost, sso/deploy.yml
 
 .PHONY: stop-sso
-stop-sso: ## Stop SSO instances
+stop-sso:  ## Stop SSO instances
 	ansible-playbook -i localhost, sso/deploy.yml --tags=remove -e sso_volume_state=absent
 
 .PHONY: rebuild-sso
-rebuild-sso: stop-sso start-sso ## Rebuild SSO instances
+rebuild-sso: stop-sso start-sso  ## Rebuild SSO instances
 
 .PHONY: start-webapp 
-start-webapp: ## Start webapp instance
+start-webapp:  ## Start webapp instance
 	pushd sso-webapp && pipenv lock -r > requirements.txt && popd
 	ansible-playbook -i localhost, sso-webapp/deploy.yml
 
 .PHONY: stop-webapp
-stop-webapp: ## Stop webapp instance
+stop-webapp:  ## Stop webapp instance
 	ansible-playbook -i localhost, sso-webapp/deploy.yml --tags=remove -e webapp_volume_state=absent
 
 .PHONY: rebuild-webapp
-rebuild-webapp: stop-webapp start-webapp ## Rebuild webapp instance
+rebuild-webapp: stop-webapp start-webapp  ## Rebuild webapp instance
 
-.PHONY: start-proxy
-start-proxy: ## Start proxy instance
-	ansible-playbook -i localhost, app-shell/deploy.yml
+.PHONY: start-webui
+start-webui:  ## Start webui instance
+	ansible-playbook -i localhost, webui/deploy.yml
 
-.PHONY: stop-proxy
-stop-proxy: ## Stop webapp instance
-	ansible-playbook -i localhost, app-shell/deploy.yml --tags=remove
+.PHONY: stop-webui
+stop-webui:  ## Stop webapp instance
+	ansible-playbook -i localhost, webui/deploy.yml --tags=remove
 
-.PHONY: rebuild-proxy
-rebuild-proxy: stop-proxy start-proxy ## Rebuild proxy instance
+.PHONY: rebuild-webui
+rebuild-webui: stop-webui start-webui  ## Rebuild webui instance
 
 .PHONY: start
-start: start-sso start-webapp start-proxy ## Start all stack components
+start: start-sso start-webapp start-webui  ## Start all stack components
 
 .PHONY: stop
-stop: stop-proxy stop-webapp stop-sso ## Stop all stack components
+stop: stop-webui stop-webapp stop-sso  ## Stop all stack components
 
 .PHONY: clean
-clean: stop ## Stop and Clean environment
+clean: stop  ## Stop and Clean environment
 	rm -rf sso-webapp/static/
 	rm -rf sso-webapp/ui/{dist,node_modules}
+	rm -rf webui/nginx/app-shell/node_modules
 
 .PHONY: rebuild
-rebuild: clean start ## Rebuild all stack components
+rebuild: clean start  ## Rebuild all stack components

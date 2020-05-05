@@ -68,7 +68,10 @@ Vagrant.configure('2') do |config|
     interface = 'en0: Wi-Fi (AirPort)'
   end
 
-  config.vm.hostname = 'sso-stack'
+  hostname = "#{`hostname -f`}"
+  config.dns.tld = 'test'
+  config.vm.hostname = 'webapp'
+
   # config.vagrant.plugins = 'vagrant-libvirt'
   if Vagrant.has_plugin?('vagrant-libvirt')
     config.vm.box = 'centos/7'
@@ -118,6 +121,11 @@ Vagrant.configure('2') do |config|
   config.vm.provision 'file', source: '~/.gitconfig', destination: '~/.gitconfig'
   # end
 
+  config.vm.provision 'env', type: 'shell', inline: %Q(
+    cat >> /home/vagrant/.bashrc <<-EOF
+	export PUBLIC_HOSTNAME=#{hostname}
+	EOF
+  )
   config.vm.provision 'base', type: 'shell', inline: $base
   config.vm.provision 'docker', type: 'shell', inline: $docker
   config.vm.provision 'python', type: 'shell', inline: $python

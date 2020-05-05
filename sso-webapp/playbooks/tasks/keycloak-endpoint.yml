@@ -2,8 +2,8 @@
 - block:
     - name: Authenticate with KeyCloak
       uri:
-        url: "http://localhost:8080/auth/realms/master\
-          /protocol/openid-connect/token"
+        url: "{{ svc_auth_baseurl }}/auth/realms/{{ auth_realm }}/protocol\
+          /openid-connect/token"
         method: POST
         body_format: form-urlencoded
         body:
@@ -21,11 +21,11 @@
       set_fact:
         token: "{{ sso_auth.json.access_token }}"
 
-    - name: Create KeyCloak test client
+    - name: Create KeyCloak API document client
       keycloak_client:
         auth_client_id: admin-cli
-        auth_keycloak_url: http://localhost:8080/auth
-        auth_realm: master
+        auth_keycloak_url: "{{ svc_auth_baseurl }}/auth"
+        auth_realm: "{{ auth_realm }}"
         auth_username: admin
         auth_password: admin
         client_id: webapp-oapi
@@ -44,17 +44,18 @@
     - name: Create KeyCloak client
       keycloak_client:
         auth_client_id: admin-cli
-        auth_keycloak_url: http://localhost:8080/auth
-        auth_realm: master
+        auth_keycloak_url: "{{ svc_auth_baseurl }}/auth"
+        auth_realm: "{{ auth_realm }}"
         auth_username: admin
         auth_password: admin
         client_id: webapp
         id: "{{ sid }}"
         protocol: openid-connect
         public_client: false
-        root_url: http://localhost:8000/webapp
+        root_url: "{{ webapp_baseurl }}"
         redirect_uris:
-          - http://localhost:8000/webapp/*
+          - "{{ webapp_baseurl }}/*"
+          - "{{ webapp_svc_url }}/*"
         standard_flow_enabled: true
         service_accounts_enabled: true
         authorization_services_enabled: true
@@ -68,7 +69,7 @@
 
     - name: Retrieve client secret
       uri:
-        url: "http://localhost:8080/auth/admin/realms/master/clients\
+        url: "{{ svc_auth_baseurl }}/auth/admin/realms/{{ auth_realm }}/clients\
           /{{ cid }}/client-secret"
         headers:
           Authorization: "bearer {{ token }}"
@@ -78,7 +79,7 @@
     - block:
         - name: Check if webapp is registered with keycloak
           uri:
-            url: http://localhost:8001/services/webapp-service/plugins?name=oidc
+            url: "{{ svc_admin_api_baseurl }}/services/webapp-service/plugins?name=oidc"
             return_content: true
           register: endpoint_configure
           failed_when: endpoint_configure.json.data == []
@@ -86,7 +87,7 @@
       rescue:
         - name: Configure webapp with keycloak
           uri:
-            url: http://localhost:8001/services/webapp-service/plugins
+            url: "{{ svc_admin_api_baseurl }}/services/webapp-service/plugins"
             method: POST
             body_format: json
             body:
@@ -94,19 +95,18 @@
               config:
                 client_id: webapp
                 client_secret: "{{ client_secret.json.value }}"
-                discovery: "http://{{ ansible_eth1.ipv4.address }}:\
-                  8080/auth/realms/master/.well-known/openid-configuration"
+                discovery: "{{ auth_baseurl }}/auth/realms/{{ auth_realm }}\
+                  /.well-known/openid-configuration"
             timeout: 300
             status_code: 201
             return_content: true
           changed_when: true
           register: endpoint_configure
-
   always:
     - name: Logout with KeyCloak
       uri:
-        url: "http://localhost:8080/auth/realms/master/protocol/openid-connect\
-          /logout"
+        url: "{{ svc_auth_baseurl }}/auth/realms/{{ auth_realm }}/protocol\
+          /openid-connect/logout"
         method: POST
         body_format: form-urlencoded
         body:

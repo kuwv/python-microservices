@@ -8,18 +8,9 @@ FastAPI is a modern asynchronous Python web framework that has support for OpenI
 
 ## Features
 - [x] Micro Frontend
-- [x] OpenAPI integration
-- [x] Resource Protector
-- [ ] OAuth Client
-- [x] Identity Propagation
-- [x] Scopes
-- [ ] RBAC
-- [x] Logging
-- [ ] Access Audit
-- [x] Authlib JOSE
 - [ ] OpenID-Connect
-- [ ] UI (via multiprocessing)
-- [ ] tls/http2
+- [ ] Static caching
+- [x] tls/http2 upgrade
 
 ## Access
 

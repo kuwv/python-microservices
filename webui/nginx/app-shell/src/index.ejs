@@ -9,7 +9,7 @@
     <script type="systemjs-importmap">
       {
         "imports": {
-          "webapp": "http://localhost:3000/js/app.js",
+          "webapp-ui": "<%= public_protocol %>://<%= public_hostname %>/api/webapp/js/app.js",
           "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@4.4.2/lib/system/single-spa.min.js",
           "vue": "https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js",
           "vue-router": "https://cdn.jsdelivr.net/npm/vue-router@3.0.7/dist/vue-router.min.js",
@@ -31,8 +31,8 @@
       Promise.all([System.import('single-spa'), System.import('vue'), System.import('vue-router')]).then(function (modules) {
         var singleSpa = modules[0];
         singleSpa.registerApplication(
-          'webapp',
-          () => System.import('webapp'),
+          'webapp-ui',
+          () => System.import('webapp-ui'),
           location => location.pathname.startsWith('/')
         );
         singleSpa.start();

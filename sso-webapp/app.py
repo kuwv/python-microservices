@@ -13,11 +13,7 @@ from security.resource_protector import ResourceProtector
 from starlette.staticfiles import StaticFiles
 
 
-# TODO: Dynamically set origins
-origins = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-]
+# config.init()
 
 # JWT
 from security.token import (
@@ -34,7 +30,7 @@ auth = ResourceProtector(
     auto_error=False,
 )
 # TODO: check if URL exists
-jwks = JWKS.parse_obj(requests.get(config.svc_jwks_url).json())
+jwks = JWKS.parse_obj(requests.get(config.svc_auth_jwks_url).json())
 auth.register_token_validator(
     JWTBearerTokenValidator(
         jwks,
@@ -54,12 +50,14 @@ app = FastAPI(
     swagger_ui_oauth2_redirect_url=config.oapi_redirect_url
 )
 
-"""TODO: Limit headers:
- - Access-Control-Allow-Headers: Authorization
+
+"""TODO: Dynamically set origins
+TODO: Limit headers:
+  - Access-Control-Allow-Headers: Authorization
 """
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=config.origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],

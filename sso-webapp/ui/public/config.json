@@ -1,0 +1,4 @@
+{
+  "WEBAPP_NAME": "webapp-ui",
+  "WEBAPP_PATH_PREFIX": "/api/webapp"
+}

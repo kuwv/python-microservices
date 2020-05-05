@@ -1,0 +1,48 @@
+---
+- hosts: all
+  become: true
+  connection: local
+
+  vars:
+    public_protocol: http
+    public_hostname: "{{ (lookup('env', 'PUBLIC_HOSTNAME') or \
+      ansible_eth1.ipv4.address) \
+      | lower }}"
+
+    auth_realm: master
+    auth_protocol: http
+    auth_hostname: "{{ public_hostname }}"
+    auth_baseurl: "{{ auth_protocol }}://\
+      {{ auth_hostname }}\
+      {% if auth_port is defined %}\
+      :{{ auth_port }}\
+      {% endif %}"
+
+    svc_auth_protocol: http
+    svc_auth_port: 8080
+    svc_auth_hostname: localhost
+    svc_auth_baseurl: "{{ svc_auth_protocol }}://\
+      {{ svc_auth_hostname }}\
+      {% if svc_auth_port is defined %}\
+      :{{ svc_auth_port }}\
+      {% endif %}"
+
+    webui_baseurl: "{{ public_protocol }}://{{ public_hostname }}"
+
+  tasks:
+    - name: Execute resource setup tasks
+      import_tasks: tasks/resources.yml
+      tags:
+        - app_shell
+
+    - name: Execute NGINX setup tasks
+      import_tasks: tasks/nginx.yml
+      tags:
+        - app_shell
+
+    - name: Execute endpoint setup tasks
+      import_tasks: tasks/keycloak-endpoint.yml
+      tags:
+        - keycloak_endpoint
+        - endpoint
+...

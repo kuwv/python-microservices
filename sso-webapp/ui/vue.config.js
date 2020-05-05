@@ -6,8 +6,8 @@ module.exports = {
         'Access-Control-Allow-Origin': '*'
       },
       disableHostCheck: true,
-      sockPort: 3000,
-      sockHost: '0.0.0.0'
+      host: '0.0.0.0',
+      port: 3000
     },
     externals: ['vue', 'vue-router', /^@vue-mf\/.+/]
   },

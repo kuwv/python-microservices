@@ -6,6 +6,11 @@
 Setup SSO with KeyCloak / Kong using Ansible and Docker.
 
 
+## Features
+
+- [ ] Roles
+
+
 ## Description
 
 KeyCloak is an IAM that provides openid-connect, SAML, and JWT for security. Kong is an API gateway

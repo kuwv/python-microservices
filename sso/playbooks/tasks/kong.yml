@@ -108,7 +108,7 @@
           KONG_ADMIN_ERROR_LOG: /dev/stderr
           KONG_PROXY_LISTEN: '0.0.0.0:8000, 0.0.0.0:8443 ssl http2'
           KONG_ADMIN_LISTEN: '0.0.0.0:8001, 0.0.0.0:8444 ssl http2'
-          KONG_PLUGINS: oidc
+          KONG_PLUGINS: cors,oidc
         recreate: true
       register: kong_register
 
@@ -128,4 +128,47 @@
       until: kong_running is success
       retries: 10
   when: not kong_state.exists
+
+- block:
+    - name: Check if cors is installed
+      uri:
+        url: "{{ svc_admin_api_baseurl }}/plugins?name=cors"
+        return_content: true
+      register: endpoint_configure
+      failed_when: endpoint_configure.json.data == []
+      no_log: true
+  rescue:
+    - name: Configure kong with CORS
+      uri:
+        url: "{{ svc_admin_api_baseurl }}/plugins"
+        method: POST
+        body_format: json
+        body:
+          name: cors
+          config:
+            origins:
+              - "{{ auth_baseurl }}"
+              - http://localhost:3001
+              - http://localhost:8000
+              - http://localhost
+              - https://localhost
+            methods:
+              - GET
+              - POST
+            headers:
+              - Accept
+              - Accept-Version
+              - Content-Length
+              - Content-MD5
+              - Content-Type
+              - Date
+              - X-Auth-Token
+            exposed_headers: X-Auth-Token
+            credentials: true
+            max_age: 3600
+        timeout: 300
+        status_code: 201
+        return_content: true
+      changed_when: true
+      register: endpoint_configure
 ...

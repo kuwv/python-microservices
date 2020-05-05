@@ -10,9 +10,9 @@ bump2version = "*"
 ansible-lint = "*"
 yamllint = "*"
 pyopenssl = "*"
+mitogen = "*"
 
 [packages]
-
 # [requires]
 # python_version = "3.6"
 

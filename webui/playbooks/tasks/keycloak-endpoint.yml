@@ -2,7 +2,7 @@
 - block:
     - name: Authenticate with KeyCloak
       uri:
-        url: "http://localhost:8080/auth/realms/master\
+        url: "{{ svc_auth_baseurl }}/auth/realms/{{ auth_realm }}\
           /protocol/openid-connect/token"
         method: POST
         body_format: form-urlencoded
@@ -24,26 +24,25 @@
     - name: Create KeyCloak client
       keycloak_client:
         auth_client_id: admin-cli
-        auth_keycloak_url: http://localhost:8080/auth
-        auth_realm: master
+        auth_keycloak_url: "{{ svc_auth_baseurl }}/auth"
+        auth_realm: "{{ auth_realm }}"
         auth_username: admin
         auth_password: admin
-        client_id: app-shell
+        client_id: webapp-ui
         protocol: openid-connect
         public_client: true
-        root_url: https://localhost
+        root_url: "{{ webui_baseurl }}"
         redirect_uris:
-          - https://localhost/*
+          - "{{ webui_baseurl }}/*"
         direct_access_grants_enabled: true
         standard_flow_enabled: true
         client_authenticator_type: client-secret
         state: present
       register: client_register
-
   always:
     - name: Logout with KeyCloak
       uri:
-        url: "http://localhost:8080/auth/realms/master\
+        url: "{{ svc_auth_baseurl }}/auth/realms/{{ auth_realm }}\
           /protocol/openid-connect/logout"
         method: POST
         body_format: form-urlencoded

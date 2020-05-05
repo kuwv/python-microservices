@@ -21,9 +21,10 @@ This is intended to be a reference architecture to demonstrate various IAM imple
 - [x] Resource endpoint
 - [x] Ansible playbooks
 - [ ] Ansible Roles
-- [ ] Micro-Frontend
+- [x] Micro-Frontend
 - [ ] PKCE
 - [x] Proxy KeyCloak / Kong
+- [ ] Web Components (w/ bit-bin)
 <!---
 - [ ] Cookiecutter
 - [ ] Task queue
@@ -34,6 +35,11 @@ This is intended to be a reference architecture to demonstrate various IAM imple
 ## Setup
 
 ### Using Vagrant
+
+Install Vagrant DNS
+```
+sudo vagrant plugin install --plugin-version="<2" vagrant-dns
+```
 
 Start VM with application
 ```

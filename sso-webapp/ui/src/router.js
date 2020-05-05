@@ -4,7 +4,6 @@ import Home from './components/Home.vue';
 import Protected from './components/Protected.vue';
 import Profile from './components/Profile.vue';
 import About from './components/About.vue';
-import { authService } from './services/auth';
 
 
 Vue.use(Router);
@@ -38,17 +37,20 @@ const router = new Router({
       path: '/about',
       name: 'about',
       component: About
-    }
+    },
+    // { 
+    //   path: '*',
+    //   name: '404',
+    //   component: NotFoundComponent
+    // }
   ]
 });
 
 router.beforeEach((to, from, next) => {
-  // const authService = new AuthService()
-
   if (to.matched.some(record => record.meta.isSecure)) {
     // this route requires auth, check if logged in
     // if not, redirect to login page.
-    authService.isUserAuthenticated().then((isAuthenticated) => {
+    Vue.prototype.$auth.isUserAuthenticated().then((isAuthenticated) => {
       if (isAuthenticated) {
         next()
       }

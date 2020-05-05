@@ -1,14 +1,17 @@
 import * as Keycloak from 'keycloak-js'
-import { auth_config } from '@/config'
+// import { auth_config } from '@/config'
 import { fireLoginEvent, fireLogoutEvent } from '@/event-bus'
 
 
-export class AuthService {
-  constructor() {
+export default class AuthService {
+  constructor(config) {
+    this._config = config;
+    console.log(this._config);
+
     this._keycloak = new Keycloak({
-      url: auth_config.url,
-      realm: auth_config.realm,
-      clientId: auth_config.client_id,
+      url: this._config.url,
+      realm: this._config.realm,
+      clientId: this._config.client_id,
     });
 
     // TODO: optional init here
@@ -21,6 +24,7 @@ export class AuthService {
 
   init() {
     this._keycloak.init({
+      // auto or manual
       onLoad: 'check-sso',
       flow: 'standard',
       checkLoginIframe: false,
@@ -35,8 +39,8 @@ export class AuthService {
 
   login() {
     this._keycloak.login({
-      redirectUri: auth_config.redirect_url,
-      scope: auth_config.scope,
+      redirectUri: this._config.redirect_url,
+      scope: this._config.scope,
     });
   }
 
@@ -104,10 +108,10 @@ export class AuthService {
   }
 }
 
-export const authService = new AuthService();
-
-export default {
-  install: function (Vue) {
-    Vue.prototype.$auth = authService;
-  }
-}
+// export const authService = new AuthService(auth_config);
+// 
+// export default {
+//   install: function (Vue) {
+//     Vue.prototype.$auth = authService;
+//   }
+// }
