@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: true
+  connection: local
+
+  tasks:
+    - name: Remove web component containers
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - bit-docker
+      tags:
+        - containers
+
+    - name: Execute web component removal tasks
+      import_tasks: tasks/resources.yml
+      vars:
+        sso_network_state: absent
+...

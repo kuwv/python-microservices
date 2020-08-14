@@ -1,27 +1,29 @@
 import * as Keycloak from 'keycloak-js'
-import { auth_config } from '@/config'
-import { fireLoginEvent, fireLogoutEvent } from '@/event-bus'
+// import { fireLoginEvent, fireLogoutEvent } from '@/event-bus'
 
 
-export class AuthService {
-  constructor() {
-    console.log("Auth: " + this.$conf);
+export default class AuthService {
+  constructor(config) {
+    this._config = config;
+    console.log(this._config);
+
     this._keycloak = new Keycloak({
-      url: auth_config.url,
-      realm: auth_config.realm,
-      clientId: auth_config.client_id,
+      url: this._config.url,
+      realm: this._config.realm,
+      clientId: this._config.client_id,
     });
 
     // TODO: optional init here
     this.init();
-    this._keycloak.onAuthSuccess = (() => fireLoginEvent());
-    this._keycloak.onAuthLogout = (() => fireLogoutEvent());
-    // this._keycloak.onAuthError = (() => fireLoginEvent());
+    // this._keycloak.onAuthSuccess = (() => fireLoginEvent());
+    // this._keycloak.onAuthLogout = (() => fireLogoutEvent());
+    // this._keycloak.onAuthError = (() => fireLoginEvent());  // troubleshoot
     this._keycloak.onTokenExpired = () => { console.log('expired'); };
   }
 
   init() {
     this._keycloak.init({
+      // auto or manual
       onLoad: 'check-sso',
       flow: 'standard',
       checkLoginIframe: false,
@@ -36,8 +38,8 @@ export class AuthService {
 
   login() {
     this._keycloak.login({
-      redirectUri: auth_config.redirect_url,
-      scope: auth_config.scope,
+      redirectUri: this._config.redirect_url,
+      scope: this._config.scope,
     });
   }
 
@@ -102,13 +104,5 @@ export class AuthService {
     }).catch(function() {
       console.log('Failed to refresh token');
     });
-  }
-}
-
-export const authService = new AuthService();
-
-export default {
-  install: function (Vue) {
-    Vue.prototype.$auth = authService;
   }
 }

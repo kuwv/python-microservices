@@ -9,6 +9,8 @@
     <script type="systemjs-importmap">
       {
         "imports": {
+          "@kuwv/auth": "<%= public_protocol %>://<%= public_hostname %>/js/auth.js",
+          "@kuwv/rest": "<%= public_protocol %>://<%= public_hostname %>/js/rest.js",
           "webapp-ui": "<%= public_protocol %>://<%= public_hostname %>/api/webapp/js/app.js",
           "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@4.4.2/lib/system/single-spa.min.js",
           "vue": "https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js",

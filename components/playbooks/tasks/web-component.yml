@@ -1,0 +1,41 @@
+---
+- name: Check if web components repository is running
+  docker_container_info:
+    name: bit
+  register: bit_state
+
+- block:
+    - name: Start web components repository
+      docker_container:
+        name: bit
+        image: 
+        volumes:
+          - bit-datastore:/var/lib/postresql/data
+        networks_cli_compatible: true
+        networks:
+          - name: webapp-net
+        exposed_ports:
+          - '22:8022'
+        env:
+          POSTGRES_DB: webapp
+          POSTGRES_USER: webapp
+          POSTGRES_PASSWORD: password
+      register: bit_register
+
+    - name: Wait for web components repository to accept connections
+      wait_for:
+        host: "{{ bit_register['ansible_facts']\
+          ['docker_container']\
+          ['NetworkSettings']\
+          ['Networks']\
+          ['webapp-net']\
+          ['IPAddress'] }}"
+        port: 8022
+        state: started
+        connect_timeout: 1
+        timeout: 30
+      register: bit_running
+      until: bit_running is success
+      retries: 10
+  when: not bit_state.exists
+...

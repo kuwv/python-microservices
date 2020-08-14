@@ -1,0 +1,33 @@
+---
+- hosts: all
+  connection: docker
+  gather_facts: no
+
+  vars:
+    app_shell_path: ../nginx/app-shell
+    docker_container: nginx
+    docker_cp_path: /usr/share/nginx/html
+
+  tasks:
+    - block:
+        - name: Perform npm install
+          command: npm install
+          args:
+            chdir: "{{ app_shell_path }}"
+            creates: "{{ app_shell_path }}/node_modules"
+
+        - name: Perform npm build
+          command: npm run build
+          args:
+            chdir: "{{ app_shell_path }}"
+            creates: "{{ app_shell_path }}/dist"
+
+        - name: Copy file to container
+          command: "docker cp \
+            {{ app_shell_path }}/dist/. \
+            {{ docker_container }}:{{ docker_cp_path }}"
+      delegate_to: localhost
+
+    - name: Restart docker container
+      raw: nginx -s reload
+...

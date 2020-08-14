@@ -1,10 +1,10 @@
 ---
-- name: Setup WebUI
+- name: Setup web components repository
   import_playbook: playbooks/provision.yml
   tags:
     - setup
 
-- name: Remove WebUI
+- name: Remove web components repository
   import_playbook: playbooks/deprovision.yml
   tags:
     - never

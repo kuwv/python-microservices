@@ -63,7 +63,7 @@ stop: stop-webui stop-webapp stop-sso  ## Stop all stack components
 clean: stop  ## Stop and Clean environment
 	rm -rf sso-webapp/static/
 	rm -rf sso-webapp/ui/{dist,node_modules}
-	rm -rf webui/nginx/app-shell/node_modules
+	rm -rf webui/nginx/app-shell/{dist,node_modules}
 
 .PHONY: rebuild
 rebuild: clean start  ## Rebuild all stack components

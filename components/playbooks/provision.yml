@@ -1,0 +1,74 @@
+---
+- hosts: all
+  become: true
+  connection: local
+
+  vars:
+    webapp_version: 2.1.3
+    public_hostname: "{{ lookup('env', 'PUBLIC_HOSTNAME') or \
+      ansible_eth1.ipv4.address \
+      | lower }}"
+
+    auth_realm: master
+    auth_protocol: http
+    auth_hostname: "{{ public_hostname }}"
+    auth_baseurl: "{{ auth_protocol }}://{{ auth_hostname }}"
+
+    svc_auth_protocol: http
+    svc_auth_port: 8080
+    svc_auth_hostname: localhost
+    svc_auth_baseurl: "{{ svc_auth_protocol }}://\
+      {{ svc_auth_hostname }}\
+      {% if svc_auth_port is defined %}\
+      :{{ svc_auth_port }}\
+      {% endif %}"
+
+    api_protocol: http
+    api_baseurl: "{{ api_protocol }}://{{ public_hostname }}/api"
+
+    admin_api_protocol: http
+    admin_api_baseurl: "{{ admin_api_protocol }}://{{ public_hostname }}\
+      {% if admin_api_port is defined %}\
+      :{{ admin_api_port }}\
+      {% endif %}/admin"
+
+    svc_admin_api_protocol: http
+    svc_admin_api_port: 8001
+    svc_admin_api_hostname: localhost
+    svc_admin_api_baseurl: "{{ svc_admin_api_protocol }}://{{ svc_admin_api_hostname }}\
+      {% if svc_admin_api_port is defined %}\
+      :{{ svc_admin_api_port }}\
+      {% endif %}"
+
+    # TODO: This is garbage :/
+    webapp_protocol: http
+    webapp_port: 8000
+    webapp_path: /api/webapp
+    webapp_baseurl: "{{ api_baseurl }}/webapp"
+    webapp_svc_url: "{{ webapp_protocol }}://{{ public_hostname }}:{{ webapp_port }}{{ webapp_path }}"
+
+  tasks:
+    - name: Execute resource setup tasks
+      import_tasks: tasks/resources.yml
+      tags:
+        - kong
+        - keycloak
+
+    - name: Execute endpoint setup tasks
+      import_tasks: tasks/web-component.yml
+      tags:
+        - keycloak
+        - component
+
+    - name: Execute kong endpoint setup tasks
+      import_tasks: tasks/kong-endpoint.yml
+      tags:
+        - kong
+        - component
+
+    - name: Execute endpoint setup tasks
+      import_tasks: tasks/keycloak-endpoint.yml
+      tags:
+        - keycloak
+        - component
+...

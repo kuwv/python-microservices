@@ -63,16 +63,16 @@ $npm = %Q(
 
 Vagrant.configure('2') do |config|
   if Vagrant::Util::Platform.linux? then
+    # config.vagrant.plugins = 'vagrant-libvirt'
     interface = 'virbr0'
   elsif Vagrant::Util::Platform.darwin? then
     interface = 'en0: Wi-Fi (AirPort)'
   end
 
   hostname = "#{`hostname -f`}"
-  config.dns.tld = 'test'
+  # config.dns.tld = 'test'
   config.vm.hostname = 'webapp'
 
-  # config.vagrant.plugins = 'vagrant-libvirt'
   if Vagrant.has_plugin?('vagrant-libvirt')
     config.vm.box = 'centos/7'
     config.vm.define 'sso-stack' do |config|
@@ -84,8 +84,8 @@ Vagrant.configure('2') do |config|
       config.vm.provider 'libvirt' do |lv|
         lv.memory = 4096
         lv.cpus = 2
-        # lv.storage_pool_name = 'default'
-        # lv.storage_pool_path = '/var/lib/libvirt/images'
+        lv.storage_pool_name = 'default'
+        lv.storage_pool_path = '/var/lib/libvirt/images'
       end
 
       config.vm.synced_folder './', '/vagrant', type: 'rsync'
@@ -147,7 +147,7 @@ Vagrant.configure('2') do |config|
   config.trigger.after :up do |trigger|
     trigger.ignore = [:destroy, :halt, :package]
     trigger.ruby do
-      system('open', 'http://localhost:8000/webapp/token')
+      system('open', 'http://localhost:8000/api/webapp/token')
     end
   end
 end

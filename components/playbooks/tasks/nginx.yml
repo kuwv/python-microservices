@@ -1,0 +1,58 @@
+---
+- name: Build NGINX app-shell image
+  docker_image:
+    name: nginx:stable-alpine
+    source: build
+    build:
+      args:
+        PUBLIC_HOSTNAME: "{{ public_hostname }}"
+      pull: true
+      path: ../nginx
+    force_source: true
+
+- name: Check if NGINX is running
+  docker_container_info:
+    name: nginx
+  register: nginx_state_register
+
+- block:
+    - name: Start NGINX
+      docker_container:
+        name: nginx
+        image: nginx:stable-alpine
+        networks_cli_compatible: true
+        networks:
+          - name: api-net
+            links:
+              - kong
+              - keycloak
+          - name: dmz-net
+        ports:
+          - '80:80'  # Listener
+          - '443:443'  # Listener (SSL)
+        volumes:
+          - /etc/pki/docker:/etc/ssl/nginx
+        env:
+          PUBLIC_HOSTNAME: "{{ public_hostname }}"
+        recreate: true
+      register: nginx_register
+
+    - name: Wait for nginx to accept connections
+      wait_for:
+        host: "{{ nginx_register['ansible_facts']\
+          ['docker_container']\
+          ['NetworkSettings']\
+          ['Networks']\
+          ['dmz-net']\
+          ['IPAddress'] }}"
+        port: 80
+        state: started
+        connect_timeout: 1
+        timeout: 30
+      register: nginx_connection_register
+      until: nginx_connection_register is success
+      retries: 10
+  when: >
+    (not nginx_state_register.exists) or
+    (not nginx_state_register.container.State.Running)
+...

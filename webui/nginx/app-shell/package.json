@@ -35,6 +35,8 @@
     "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
+    "axios": "^0.19.2",
+    "keycloak-js": "^10.0.1",
     "single-spa": "^4.4.2"
   }
 }

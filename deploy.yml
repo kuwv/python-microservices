@@ -4,8 +4,13 @@
   tags:
     - sso
 
-- name: Setup Webapp
+- name: Setup WebApp
   import_playbook: sso-webapp/deploy.yml
   tags:
     - webapp
+
+- name: Setup WebUI
+  import_playbook: webui/deploy.yml
+  tags:
+    - webui
 ...

@@ -1,13 +1,15 @@
+const glob = require('glob');
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = env => ({
-  entry: path.resolve(__dirname, "src/vue-mf-root-config"),
-  output: {
-    filename: "vue-mf-root-config.js",
-    libraryTarget: "system",
-    path: path.resolve(__dirname, "dist")
+  devServer: {
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+    disableHostCheck: true,
+    historyApiFallback: true
   },
   devtool: "sourcemap",
   module: {
@@ -20,13 +22,6 @@ module.exports = env => ({
       }
     ]
   },
-  devServer: {
-    headers: {
-      "Access-Control-Allow-Origin": "*"
-    },
-    disableHostCheck: true,
-    historyApiFallback: true
-  },
   plugins: [
     new HtmlWebpackPlugin({
       inject: false,
@@ -38,5 +33,14 @@ module.exports = env => ({
     }),
     new CleanWebpackPlugin()
   ],
+  entry: {
+    auth: path.resolve(__dirname, "src/plugins/auth"),
+    rest: path.resolve(__dirname, "src/plugins/rest")
+  },
+  output: {
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist"),
+    libraryTarget: "system"
+  },
   externals: ["single-spa", "vue", "vue-router", /^@vue-mf\/.+$/]
 });

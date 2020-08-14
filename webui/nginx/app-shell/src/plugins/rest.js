@@ -1,9 +1,8 @@
-import axios from 'axios'
-import { rest_config } from '@/config'
-import { authService } from '@/plugins/auth'
+import Vue from 'vue';
+import axios from 'axios';
 
 
-class RESTClient {
+export default class RESTClient {
   // this.isHandlerEnabled = (config={}) => {
   //   return config.hasOwnProperty('handlerEnabled') && !config.handlerEnabled ? false : true
   // }
@@ -18,7 +17,7 @@ class RESTClient {
     });
 
     this.instance.interceptors.request.use(async config => {
-      let access_token = await authService.getAccessToken();
+      let access_token = await Vue.prototype.$auth.getAccessToken();
       config.headers.common.Authorization = `Bearer ${access_token}`;
       return config;
     });
@@ -64,10 +63,10 @@ class RESTClient {
   }
 }
 
-export const restClient = new RESTClient(rest_config);
-
-export default {
-  install: function (Vue) {
-    Vue.prototype.$http = restClient;
-  }
-}
+// export const restClient = new RESTClient(rest_config);
+// 
+// export default {
+//   install: function (Vue) {
+//     Vue.prototype.$http = restClient;
+//   }
+// }
