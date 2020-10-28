@@ -49,7 +49,7 @@ six==1.15.0
 sniffio==1.2.0
 sqlalchemy==1.3.20
 starlette==0.12.9
-twisted[http2,tls]==19.10.0
+twisted[http2,tls]==20.3.0
 txaio==20.4.1
 typing-extensions==3.7.4.3
 urllib3==1.25.11
